@@ -1,0 +1,46 @@
+name: create-images
+
+on:
+    workflow_dispatch:
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Install dependencies
+              run: | 
+                    sudo apt-get update
+                    sudo apt-get install-y qemu-user--static xz-utils wget
+
+            - name: Download Packer
+              uses: hashicorp/setup-packer@v2
+              with:
+                version: '1.10.3'
+            
+            - name: Download plugin binary
+              run: | 
+                 PLUGIN_VER=0.2.7
+                 mkdir -p ~/.config/packer/plugins/github.com/solo-io/arm-image/${PLUGIN_VER}/linux_amd64
+                 curl -L -o /tmp/packer-plugin-arm-image.zip \
+                 "https://github.com/solo-io/packer-plugin-arm-image/releases/download/v${PLUGIN_VER}/packer-plugin-arm-image_linux_amd64.zip"
+                 unzip /tmp/packer-plugin-arm-image.zip -d /tmp/
+                 mv /tmp/packer-plugin-arm-image \
+                 ~/.config/packer/plugins/github.com/solo-io/arm-image/${PLUGIN_VER}/linux_amd64/
+                 chmod +x ~/.config/packer/plugins/github.com/solo-io/arm-image/${PLUGIN_VER}/linux_amd64/packer-plugin-arm-image
+
+            - name: Validate packer template
+              run: |
+                packer validate packer/ubuntu.pkr.hcl
+
+            - name: Build ubuntu image
+              run: |
+                packer build packer/ubuntu.pkr.hcl
+            - name: Upload image as artifcat
+              uses: actions/upload-artifact@v4
+              with:
+                name: ubuntu-pi-image
+                path: disk_images/*.img
+                retention-days: 14
+            
