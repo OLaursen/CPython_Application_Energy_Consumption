@@ -15,6 +15,8 @@ RUN PACKER_VERSION=1.11.2 && \
     unzip packer_${PACKER_VERSION}_linux_amd64.zip -d /usr/local/bin && \
     rm packer_${PACKER_VERSION}_linux_amd64.zip
 
+# Install arm-image plugin for packer
+RUN packer plugins install github.com/solo-io/arm-image
 # Default workdir for mounting your project
 WORKDIR /workspace
 
