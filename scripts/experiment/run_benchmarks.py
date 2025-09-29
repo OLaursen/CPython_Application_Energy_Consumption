@@ -153,44 +153,39 @@ if __name__ == '__main__':
         project = otii.get_active_project()
         with open("credentials.json") as f:
             credentials = json.load(f)
-            max = 11     
-            for i in range(max):
-                print(f"Running iteration {i+1} of {max}")
-                try:
-                    main(otii, device, project, "RPi3B+", "Alpine", "python3.13", credentials["hostname"], credentials["username"], credentials["password"])
-                    time.sleep(5)
-                except Exception as error:
-                    print(f"Something went wrong: {error}. Skipping iteration.")
-                    time.sleep(10)
-            for i in range(max):
-                print(f"Running iteration {i+1} of {max}")
-                try:
-                    main(otii, device, project, "RPi3B+", "Alpine", "python3.12", credentials["hostname"], credentials["username"], credentials["password"])
-                    time.sleep(5)
-                except Exception as error:
-                    print(f"Something went wrong: {error}. Skipping iteration.")
-                    time.sleep(10)
-            for i in range(max):
-                print(f"Running iteration {i+1} of {max}")
-                try:
-                    main(otii, device, project, "RPi3B+", "Alpine", "python3.11", credentials["hostname"], credentials["username"], credentials["password"])
-                    time.sleep(5)
-                except Exception as error:
-                    print(f"Something went wrong: {error}. Skipping iteration.")
-                    time.sleep(10)
-            for i in range(max):
-                print(f"Running iteration {i+1} of {max}")
-                try:
-                    main(otii, device, project, "RPi3B+", "Alpine", "python3.10", credentials["hostname"], credentials["username"], credentials["password"])
-                    time.sleep(5)
-                except Exception as error:
-                    print(f"Something went wrong: {error}. Skipping iteration.")
-                    time.sleep(10)
-            for i in range(max):
-                print(f"Running iteration {i+1} of {max}")
-                try:
-                    main(otii, device, project, "RPi3B+", "Alpine", "python3.9", credentials["hostname"], credentials["username"], credentials["password"])
-                    time.sleep(5)
-                except Exception as error:
-                    print(f"Something went wrong: {error}. Skipping iteration.")
-                    time.sleep(10)
+            
+            print(f"Running python 3.13")
+            try:
+                main(otii, device, project, "RPi3B+", "Alpine", "python3.13", credentials["hostname"], credentials["username"], credentials["password"])
+                time.sleep(5)
+            except Exception as error:
+                print(f"Something went wrong: {error}.")
+                time.sleep(10)
+            print(f"Running python 3.12")
+            try:
+                main(otii, device, project, "RPi3B+", "Alpine", "python3.12", credentials["hostname"], credentials["username"], credentials["password"])
+                time.sleep(5)
+            except Exception as error:
+                print(f"Something went wrong: {error}.")
+                time.sleep(10)
+            print(f"Running python 3.11")
+            try:
+                main(otii, device, project, "RPi3B+", "Alpine", "python3.11", credentials["hostname"], credentials["username"], credentials["password"])
+                time.sleep(5)
+            except Exception as error:
+                print(f"Something went wrong: {error}.")
+                time.sleep(10)
+            print(f"Running python 3.10")
+            try:
+                main(otii, device, project, "RPi3B+", "Alpine", "python3.10", credentials["hostname"], credentials["username"], credentials["password"])
+                time.sleep(5)
+            except Exception as error:
+                print(f"Something went wrong: {error}.")
+                time.sleep(10)
+            print(f"Running python 3.9")
+            try:
+                main(otii, device, project, "RPi3B+", "Alpine", "python3.9", credentials["hostname"], credentials["username"], credentials["password"])
+                time.sleep(5)
+            except Exception as error:
+                print(f"Something went wrong: {error}.")
+                time.sleep(10)
