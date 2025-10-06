@@ -12,8 +12,8 @@ variable "target" {
 }
 
 source "arm-image" "openbsd" {
-  image_url = "https://cdn.openbsd.org/pub/OpenBSD/7.7/arm64/install77.img"
-  image_checksum = "sha256:424c8e3207df8177e854bb1ee4cefdf0cff95aa9e7e58b64e4db7b52e7d2aea1"
+  iso_url = "https://cdn.openbsd.org/pub/OpenBSD/7.7/arm64/install77.img"
+  iso_checksum = "sha256:424c8e3207df8177e854bb1ee4cefdf0cff95aa9e7e58b64e4db7b52e7d2aea1"
   output_filename = "disk_images/openbsd_77_arm64.img"
   qemu_binary     = "/usr/bin/qemu-arm-static"
 }
@@ -28,15 +28,15 @@ build {
   }
 
   provisioner "file" {
-    source      = "scripts/experiment/install_python_freebsd.sh"
+    source      = "/workspace/experiment/install_python_freebsd.sh"
     destination = "/tmp/install_python_freebsd.sh"
   }
   provisioner "file" {
-    source      = "scripts/experiment/run_benchmarks.sh"  
+    source      = "/workspace/experiment/run_benchmarks.sh"  
     destination = "/tmp/run_benchmarks.sh"
   }
   provisioner "file" {
-    source      = "scripts/experiment/run_benchmarks.py"  
+    source      = "/workspace/experiment/run_benchmarks.py"  
     destination = "/tmp/run_benchmarks.py"
   }
 

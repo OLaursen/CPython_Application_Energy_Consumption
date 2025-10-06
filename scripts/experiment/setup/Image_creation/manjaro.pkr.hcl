@@ -25,15 +25,15 @@ build {
   }
   #Copy installer script
   provisioner "file" {
-    source      = "scripts/experiment/setup/Image_creation/install_python_arch.sh"
+    source      = "/workspace/experiment/install_python_arch.sh"
     destination = "/tmp/install_python_arch.sh"
   }  
   provisioner "file" {
-    source      = "scripts/experiment/run_benchmarks.sh"  
+    source      = "/workspace/experiment/run_benchmarks.sh"  
     destination = "/tmp/run_benchmarks.sh"
   }
   provisioner "file" {
-    source      = "scripts/experiment/run_benchmarks.py"  
+    source      = "/workspace/experiment/run_benchmarks.py"  
     destination = "/tmp/run_benchmarks.py"
   }
   # Execute installer script

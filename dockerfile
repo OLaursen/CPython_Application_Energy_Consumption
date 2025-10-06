@@ -9,7 +9,7 @@ RUN apt-get update && apt-get install -y \
     qemu qemu-user-static \
     && rm -rf /var/lib/apt/lists/*
 
-# Install HashiCorp Packer (latest stable)
+# Install HashiCorp Packer 
 RUN PACKER_VERSION=1.11.2 && \
     wget https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_linux_amd64.zip && \
     unzip packer_${PACKER_VERSION}_linux_amd64.zip -d /usr/local/bin && \
@@ -17,6 +17,7 @@ RUN PACKER_VERSION=1.11.2 && \
 
 # Install arm-image plugin for packer
 RUN packer plugins install github.com/solo-io/arm-image
+
 # Default workdir for mounting your project
 WORKDIR /workspace
 

@@ -19,8 +19,33 @@ sudo apt install qemu-user-static
 ```
 Include the path to the binary in the *.pkr.hcl file. 
 
+## Dockerfile for building images on non-arm64 hosts
+From root folder:
+
+```bash
+docker build -t create_images .
+```
+Then run the container with the following command:
+
+```bash
+docker run -it --rm --privileged \
+  -v ./scripts/experiment:/workspace/experiment \
+  -v ./outputs:/workspace/output \
+  create_images
+```
+## Creating the images for ubuntu
+From inside the container, run the following commands:
+ 
+```bash
+cd .. #We need to be in the root folder as the paths are hardcoded in the *.pkr.hcl files
+packer init workspace/experiment/setup/Image_creation/ubuntu.pkr.hcl
+packer validate workspace/experiment/setup/Image_creation/ubuntu.pkr.hcl
+packer build workspace/experiment/setup/Image_creation/ubuntu.pkr.hcl
+```
+
+
 ## Arm-image plugin for packer docs:
-command_wrapper (string) - Lets you prefix all builder commands, such as with ssh for a remote build host. Defaults to "". Copied from other builders :)
+command_wrapper (string) - Lets you prefix all builder commands, such as with ssh for a remote build host. Defaults to "". Copied from other builders :
 
 output_directory (string) - Output directory, where the final image will be stored. Deprecated - Use OutputFile instead
 

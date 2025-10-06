@@ -14,8 +14,8 @@ variable "target" {
 
 # This Alpine images are created for Pi's, so it may have an unforeseen advantage compared to the other operating systems. 
 source "arm-image" "netbsd" {
-  image_url = "https://nycdn.netbsd.org/pub/NetBSD-daily/netbsd-10/latest/evbarm-aarch64/binary/gzimg/arm64.img.gz"
-  image_checksum = "sha256:38cc4e9245a88fd41368a4533b5c09e3e51d1b6539c8b3fbb65f31118fccffd8"
+  iso_url = "https://nycdn.netbsd.org/pub/NetBSD-daily/netbsd-10/latest/evbarm-aarch64/binary/gzimg/arm64.img.gz"
+  iso_checksum = "sha256:38cc4e9245a88fd41368a4533b5c09e3e51d1b6539c8b3fbb65f31118fccffd8"
   output_filename = "disk_images/netbsd_10_arm64.img"
   qemu_binary     = "/usr/bin/qemu-arm-static"
 }
@@ -36,15 +36,15 @@ build {
   }
 
   provisioner "file" {
-    source      = "scripts/experiment/install_python_freebsd.sh"
+    source      = "/workspace/experiment/install_python_freebsd.sh"
     destination = "/tmp/install_python_freebsd.sh"
   }
   provisioner "file" {
-    source      = "scripts/experiment/run_benchmarks.sh"  
+    source      = "/workspace/experiment/run_benchmarks.sh"  
     destination = "/tmp/run_benchmarks.sh"
   }
   provisioner "file" {
-    source      = "scripts/experiment/run_benchmarks.py"  
+    source      = "/workspace/experiment/run_benchmarks.py"  
     destination = "/tmp/run_benchmarks.py"
   }
 

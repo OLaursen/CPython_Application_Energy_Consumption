@@ -13,8 +13,8 @@ variable "target" {
 
 # This Alpine images are created for Pi's, so it may have an unforeseen advantage compared to the other operating systems. 
 source "arm-image" "freebsd-pi34" {
-  image_url = "https://download.freebsd.org/releases/arm64/aarch64/ISO-IMAGES/14.3/FreeBSD-14.3-RELEASE-arm64-aarch64-RPI.img.xz"
-  image_checksum = "sha256:d9850012811a5fdf07e2585f1ba13f38c920e6fa5d6e992b688f4913912e021b"
+  iso_url = "https://download.freebsd.org/releases/arm64/aarch64/ISO-IMAGES/14.3/FreeBSD-14.3-RELEASE-arm64-aarch64-RPI.img.xz"
+  iso_checksum = "sha256:d9850012811a5fdf07e2585f1ba13f38c920e6fa5d6e992b688f4913912e021b"
   output_filename = "disk_images/freebsd-143_arm64.img"
   qemu_binary     = "/usr/bin/qemu-arm-static"
 }
@@ -33,15 +33,15 @@ build {
   }
 
   provisioner "file" {
-    source      = "scripts/experiment/install_python_freebsd.sh"
+    source      = "/workspace/experiment/install_python_freebsd.sh"
     destination = "/tmp/install_python_freebsd.sh"
   }
   provisioner "file" {
-    source      = "scripts/experiment/run_benchmarks.sh"  
+    source      = "/workspace/experiment/run_benchmarks.sh"  
     destination = "/tmp/run_benchmarks.sh"
   }
   provisioner "file" {
-    source      = "scripts/experiment/run_benchmarks.py"  
+    source      = "/workspace/experiment/run_benchmarks.py"  
     destination = "/tmp/run_benchmarks.py"
   }
 
