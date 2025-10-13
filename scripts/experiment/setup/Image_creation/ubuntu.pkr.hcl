@@ -6,6 +6,10 @@ packer {
     }
   }
 }
+variable "useEmbeddedQemu" {
+  type    = bool
+  default = true
+}
 
 source "arm-image" "ubuntu" {
   iso_url = "https://cdimage.ubuntu.com/releases/22.04/release/ubuntu-22.04.5-preinstalled-server-arm64+raspi.img.xz"
@@ -23,7 +27,7 @@ source "arm-image" "ubuntu" {
       ["bind", "/run/systemd", "/run/systemd"]
   ]
   # Due to the architecture of the pi, qemu needs to be externally used requiring the binary. 
-  qemu_binary     = "/usr/bin/qemu-aarch64-static"
+  qemu_binary = embeddedQemu ? "" : "/usr/bin/qemu-aarch64-static"
 }
 
 build {
