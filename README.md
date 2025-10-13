@@ -17,6 +17,9 @@ All the code herein was written with some assistance from ChatGPT.
 ```bash
 sudo apt install qemu-user-static
 ```
+
+I tried using qemu-system:
+
 Include the path to the binary in the *.pkr.hcl file. 
 
 ## Dockerfile for building images on non-arm64 hosts

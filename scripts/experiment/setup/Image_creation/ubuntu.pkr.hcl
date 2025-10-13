@@ -39,15 +39,15 @@ build {
   # Usings paths from inside docker container. 
   #Copy installer script
   provisioner "file" {
-    source      = "/workspace/experiment/install_python_debian.sh"
+    source      = "/experiment/install_python_debian.sh"
     destination = "/tmp/install_python_debian.sh"
   }  
   provisioner "file" {
-    source      = "/workspace/experiment/run_benchmarks.sh"  
+    source      = "/experiment/run_benchmarks.sh"  
     destination = "/tmp/run_benchmarks.sh"
   }
   provisioner "file" {
-    source      = "/workspace/experiment/run_benchmarks.py"  
+    source      = "/experiment/run_benchmarks.py"  
     destination = "/tmp/run_benchmarks.py"
   }
   # Execute installer script
