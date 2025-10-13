@@ -44,6 +44,47 @@ packer build workspace/experiment/setup/Image_creation/ubuntu.pkr.hcl
 ```
 
 
+## Dockerfile for building images on non-arm64 hosts
+From root folder:
+
+```bash
+docker build -t create_images .
+```
+Then run the container with the following command:
+
+```bash
+docker run -it --rm --privileged \
+  -v ./scripts/experiment:/workspace/experiment \
+  -v ./outputs:/workspace/output \
+  create_images
+```
+## Experiment notes
+- Needs to have enable ssh mounted in the disk image
+- - Enable ssh - use PaswordAuthentication
+- Also have to set password and user if ssh'ing
+
+#### Needed to add swapfile inorder to complete install_python script on ubuntu with pi3b+:
+
+pi@ubuntu:~$ sudo fallocate -l 2G /swapfile
+sudo chmod 600 /swapfile
+sudo mkswap /swapfile
+sudo swapon /swapfile
+Setting up swapspace version 1, size = 2 GiB (2147479552 bytes)
+no label, UUID=61cfe5fb-6ffd-4433-8ed1-28db9ea4803a
+pi@ubuntu:~$ free -h
+               total        used        free      shared  buff/cache   available
+Mem:           896Mi       445Mi       354Mi       139Mi       313Mi       451Mi
+Swap:          2.0Gi          0B       2.0Gi
+## Creating the images for ubuntu
+From inside the container, run the following commands:
+ 
+```bash
+cd .. #We need to be in the root folder as the paths are hardcoded in the *.pkr.hcl files
+packer init workspace/experiment/setup/Image_creation/ubuntu.pkr.hcl
+packer validate workspace/experiment/setup/Image_creation/ubuntu.pkr.hcl
+packer build workspace/experiment/setup/Image_creation/ubuntu.pkr.hcl
+```
+
 ## Arm-image plugin for packer docs:
 command_wrapper (string) - Lets you prefix all builder commands, such as with ssh for a remote build host. Defaults to "". Copied from other builders :
 
