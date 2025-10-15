@@ -6,10 +6,6 @@ packer {
     }
   }
 }
-variable "useEmbeddedQemu" {
-  type    = bool
-  default = true
-}
 
 source "arm-image" "ubuntu" {
   iso_url = "https://cdimage.ubuntu.com/releases/22.04/release/ubuntu-22.04.5-preinstalled-server-arm64+raspi.img.xz"
@@ -27,34 +23,37 @@ source "arm-image" "ubuntu" {
       ["bind", "/run/systemd", "/run/systemd"]
   ]
   # Due to the architecture of the pi, qemu needs to be externally used requiring the binary. 
-  qemu_binary = embeddedQemu ? "" : "/usr/bin/qemu-aarch64-static"
+  qemu_binary =  "/usr/bin/qemu-aarch64-static"
 }
 
 build {
   name    = "ubuntu"
   sources = ["source.arm-image.ubuntu"]
   provisioner "shell" {
-    inline = [" date | sudo tee /etc/motd"]
+    inline = [
+      "touch /boot/ssh",
+    ]
+
   }
   # Usings paths from inside docker container. 
   #Copy installer script
-  provisioner "file" {
-    source      = "/experiment/install_python_debian.sh"
-    destination = "/tmp/install_python_debian.sh"
-  }  
-  provisioner "file" {
-    source      = "/experiment/run_benchmarks.sh"  
-    destination = "/tmp/run_benchmarks.sh"
-  }
-  provisioner "file" {
-    source      = "/experiment/run_benchmarks.py"  
-    destination = "/tmp/run_benchmarks.py"
-  }
-  # Execute installer script
-  provisioner "shell" {
-    inline = [
-      "chmod +x /tmp/install_python_debian.sh",
-      "/tmp/install_python_debian.sh"
-    ]
-  }
+  # provisioner "file" {
+  #   source      = "/experiment/install_python_debian.sh"
+  #   destination = "/tmp/install_python_debian.sh"
+  # }  
+  # provisioner "file" {
+  #   source      = "/experiment/run_benchmarks.sh"  
+  #   destination = "/tmp/run_benchmarks.sh"
+  # }
+  # provisioner "file" {
+  #   source      = "/experiment/run_benchmarks.py"  
+  #   destination = "/tmp/run_benchmarks.py"
+  # }
+  # # Execute installer script
+  # provisioner "shell" {
+  #   inline = [
+  #     "chmod +x /tmp/install_python_debian.sh",
+  #     "/tmp/install_python_debian.sh"
+  #   ]
+  # }
 }
