@@ -36,24 +36,22 @@ build {
   }
 
   provisioner "file" {
-    source      = "/workspace/experiment/install_python_freebsd.sh"
+    source      = "${path.cwd}/install_python_freebsd.sh"
     destination = "/tmp/install_python_freebsd.sh"
   }
   provisioner "file" {
-    source      = "/workspace/experiment/run_benchmarks.sh"  
+    source      = "${path.cwd}/run_benchmarks.sh"  
     destination = "/tmp/run_benchmarks.sh"
   }
   provisioner "file" {
-    source      = "/workspace/experiment/run_benchmarks.py"  
+    source      = "${path.cwd}/run_benchmarks.py"  
     destination = "/tmp/run_benchmarks.py"
   }
 
   provisioner "shell" {
     inline = [
       "chmod +x /tmp/install_python_freebsd.sh",
-      "/tmp/install_python_freebsd.sh",
-      "chmod +x /tmp/run_benchmarks.sh",
-      "chomod +x /tmp/run_benchmarks.py"
+      "/tmp/install_python_freebsd.sh"
     ]
   }
 }

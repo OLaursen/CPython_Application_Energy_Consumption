@@ -22,8 +22,8 @@ source "arm-image" "ubuntu" {
       ["binfmt_misc", "binfmt_misc", "/proc/sys/fs/binfmt_misc"],
       ["bind", "/run/systemd", "/run/systemd"]
   ]
-  # Due to the architecture of the pi, qemu needs to be externally used requiring the binary. 
-  qemu_binary =  "/usr/bin/qemu-aarch64-static"
+  # only needed if qemu is not installed system wide
+  #qemu_binary =  "/usr/bin/qemu-aarch64-static"
 }
 
 build {
@@ -35,25 +35,24 @@ build {
     ]
 
   }
-  # Usings paths from inside docker container. 
-  #Copy installer script
-  # provisioner "file" {
-  #   source      = "/experiment/install_python_debian.sh"
-  #   destination = "/tmp/install_python_debian.sh"
-  # }  
-  # provisioner "file" {
-  #   source      = "/experiment/run_benchmarks.sh"  
-  #   destination = "/tmp/run_benchmarks.sh"
-  # }
-  # provisioner "file" {
-  #   source      = "/experiment/run_benchmarks.py"  
-  #   destination = "/tmp/run_benchmarks.py"
-  # }
-  # # Execute installer script
-  # provisioner "shell" {
-  #   inline = [
-  #     "chmod +x /tmp/install_python_debian.sh",
-  #     "/tmp/install_python_debian.sh"
-  #   ]
-  # }
+  # Copy installer script
+  provisioner "file" {
+    source      = "${path.cwd}/install_python_debian.sh"
+    destination = "/tmp/install_python_debian.sh"
+  }  
+  provisioner "file" {
+    source      = "${path.cwd}/run_benchmarks.sh"  
+    destination = "/tmp/run_benchmarks.sh"
+  }
+  provisioner "file" {
+    source      = "${path.cwd}/run_benchmarks.py"  
+    destination = "/tmp/run_benchmarks.py"
+  }
+   # Execute installer script
+  provisioner "shell" {
+    inline = [
+      "chmod +x /tmp/install_python_debian.sh",
+      "/tmp/install_python_debian.sh"
+    ]
+  }
 }

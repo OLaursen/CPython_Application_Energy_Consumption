@@ -16,12 +16,9 @@ source "arm-image" "freebsd-pi34" {
   iso_url = "https://download.freebsd.org/releases/arm64/aarch64/ISO-IMAGES/14.3/FreeBSD-14.3-RELEASE-arm64-aarch64-RPI.img.xz"
   iso_checksum = "sha256:d9850012811a5fdf07e2585f1ba13f38c920e6fa5d6e992b688f4913912e021b"
   output_filename = "disk_images/freebsd-143_arm64.img"
-  qemu_binary     = "/usr/bin/qemu-arm-static"
+  
+  #qemu_binary     = "/usr/bin/qemu-arm-static"
 }
-# Currently pi5 is not supported for FreeBSD
-#source "arm-image" "freebsd-pi5" {
-#
-#}
 
 build {
   name    = var.target
@@ -33,15 +30,15 @@ build {
   }
 
   provisioner "file" {
-    source      = "/workspace/experiment/install_python_freebsd.sh"
+    source      = "${path.cwd}/install_python_freebsd.sh"
     destination = "/tmp/install_python_freebsd.sh"
   }
   provisioner "file" {
-    source      = "/workspace/experiment/run_benchmarks.sh"  
+    source      = "${path.cwd}/run_benchmarks.sh"  
     destination = "/tmp/run_benchmarks.sh"
   }
   provisioner "file" {
-    source      = "/workspace/experiment/run_benchmarks.py"  
+    source      = "${path.cwd}/run_benchmarks.py"  
     destination = "/tmp/run_benchmarks.py"
   }
 
@@ -49,8 +46,6 @@ build {
     inline = [
       "chmod +x /tmp/install_python_freebsd.sh",
       "/tmp/install_python_freebsd.sh",
-      "chmod +x /tmp/run_benchmarks.sh",
-      "chomod +x /tmp/run_benchmarks.py"
     ]
   }
 }

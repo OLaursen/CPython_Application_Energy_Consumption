@@ -12,7 +12,7 @@ source "arm-image" "manjaro" {
   iso_checksum = "sha256:7a496df5a18e7657ff5ae289af2044d74a5ba7ff"
   output_filename = "disk_images/manjaro-minimal_arm64.img"
   # Due to the architecture of the pi, qemu needs to be externally used requiring the binary. 
-  qemu_binary     = "/usr/bin/qemu-aarch64-static"
+  #qemu_binary     = "/usr/bin/qemu-aarch64-static"
 }
 
 build {
@@ -25,15 +25,15 @@ build {
   }
   #Copy installer script
   provisioner "file" {
-    source      = "/workspace/experiment/install_python_arch.sh"
+    source      = "${path.cwd}/install_python_arch.sh"
     destination = "/tmp/install_python_arch.sh"
   }  
   provisioner "file" {
-    source      = "/workspace/experiment/run_benchmarks.sh"  
+    source      = "${path.cwd}/run_benchmarks.sh"  
     destination = "/tmp/run_benchmarks.sh"
   }
   provisioner "file" {
-    source      = "/workspace/experiment/run_benchmarks.py"  
+    source      = "${path.cwd}/run_benchmarks.py"  
     destination = "/tmp/run_benchmarks.py"
   }
   # Execute installer script
