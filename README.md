@@ -12,16 +12,6 @@ The contents herein are made freely available under the MIT license.
 All the code herein was written with some assistance from ChatGPT.
 
 
-## Install qemu-user-static to cross emulate
-
-```bash
-sudo apt install qemu-user-static
-```
-
-I tried using qemu-system:
-
-Include the path to the binary in the *.pkr.hcl file. 
-
 ## Dockerfile for building images on non-arm64 hosts
 From root folder:
 
@@ -37,17 +27,15 @@ docker run -it --rm --privileged \
   create_images
 ```
 ## Creating the images for ubuntu
-From inside the container, run the following commands:
  
 ```bash
-cd .. #We need to be in the root folder as the paths are hardcoded in the *.pkr.hcl files
-packer init workspace/experiment/setup/Image_creation/ubuntu.pkr.hcl
-packer validate workspace/experiment/setup/Image_creation/ubuntu.pkr.hcl
-packer build workspace/experiment/setup/Image_creation/ubuntu.pkr.hcl
+#Need to be in the experiment folder, due to hardcoded paths in the *.pkr.hcl files
+packer init setup/Image_creation/ubuntu.pkr.hcl
+packer validate setup/Image_creation/ubuntu.pkr.hcl
+packer build setup/Image_creation/ubuntu.pkr.hcl
 ```
 
-
-## Dockerfile for building images on non-arm64 hosts
+## Dockerfile for building images on non-arm64 hosts (NOT WORKING)
 From root folder:
 
 ```bash
@@ -66,6 +54,7 @@ docker run -it --rm --privileged \
 - - Enable ssh - use PaswordAuthentication
 - Also have to set password and user if ssh'ing
 
+FreeBSD is not supported on pi5, so only pi4 images are created for FreeBSD.
 #### Needed to add swapfile inorder to complete install_python script on ubuntu with pi3b+:
 
 pi@ubuntu:~$ sudo fallocate -l 2G /swapfile
@@ -78,15 +67,6 @@ pi@ubuntu:~$ free -h
                total        used        free      shared  buff/cache   available
 Mem:           896Mi       445Mi       354Mi       139Mi       313Mi       451Mi
 Swap:          2.0Gi          0B       2.0Gi
-## Creating the images for ubuntu
-From inside the container, run the following commands:
- 
-```bash
-cd .. #We need to be in the root folder as the paths are hardcoded in the *.pkr.hcl files
-packer init workspace/experiment/setup/Image_creation/ubuntu.pkr.hcl
-packer validate workspace/experiment/setup/Image_creation/ubuntu.pkr.hcl
-packer build workspace/experiment/setup/Image_creation/ubuntu.pkr.hcl
-```
 
 ## Arm-image plugin for packer docs:
 command_wrapper (string) - Lets you prefix all builder commands, such as with ssh for a remote build host. Defaults to "". Copied from other builders :
