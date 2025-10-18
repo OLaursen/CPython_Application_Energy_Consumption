@@ -14,6 +14,8 @@ variable "target" {
 source "arm-image" "alpine-pi34" {
   iso_url = "https://dl-cdn.alpinelinux.org/alpine/v3.22/releases/armv7/alpine-rpi-3.22.1-armv7.tar.gz"
   iso_checksum = "sha256:b5a9812bfaa6c27afba345bea73ac9e7a8767eeab39d72e326a59df146e7207d"
+  image_mounts = ["/boot/firmware","/"]
+  
   output_filename = "disk_images/alpine-322_armv7.img"
   #qemu_binary     = "/usr/bin/qemu-arm-static"
 }
