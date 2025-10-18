@@ -37,7 +37,7 @@ build {
   }
   # Copy installer script
   provisioner "file" {
-    source      = "${path.cwd}/install_python_debian.sh"
+    source      = "${path.cwd}/python_installers/install_python_debian.sh"
     destination = "/tmp/install_python_debian.sh"
   }  
   provisioner "file" {

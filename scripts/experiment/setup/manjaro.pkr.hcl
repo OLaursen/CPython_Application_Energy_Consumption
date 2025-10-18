@@ -25,7 +25,7 @@ build {
   }
   #Copy installer script
   provisioner "file" {
-    source      = "${path.cwd}/install_python_arch.sh"
+    source      = "${path.cwd}/python_installers/install_python_arch.sh"
     destination = "/tmp/install_python_arch.sh"
   }  
   provisioner "file" {

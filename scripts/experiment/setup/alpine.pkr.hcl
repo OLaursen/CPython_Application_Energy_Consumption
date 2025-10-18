@@ -38,7 +38,7 @@ build {
 
   # Copy installer script
   provisioner "file" {
-    source      = "${path.cwd}/install_python_alpine.sh"
+    source      = "${path.cwd}/python_installers/install_python_alpine.sh"
     destination = "/tmp/install_python_alpine.sh"
   }  
   provisioner "file" {

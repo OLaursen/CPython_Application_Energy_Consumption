@@ -28,7 +28,7 @@ build {
   }
 
   provisioner "file" {
-    source      = "${path.cwd}/install_python_freebsd.sh"
+    source      = "${path.cwd}/python_installers/install_python_freebsd.sh"
     destination = "/tmp/install_python_freebsd.sh"
   }
   provisioner "file" {
