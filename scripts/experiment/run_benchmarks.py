@@ -8,7 +8,7 @@ class AppException(Exception):
 
 def run_benchmarks(rpi, linux, version, hostname, username, password):
     # Define command to run script
-    command = "bash Python_Application_Energy_Consumption/scripts/experiment/run_benchmarks.sh " + version
+    command = "bash CPython_Application_Energy_Consumption/scripts/experiment/run_benchmarks.sh " + version
 
     try:
         # Create an SSH client
