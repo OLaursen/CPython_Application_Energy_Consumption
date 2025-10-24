@@ -25,7 +25,7 @@ install_python() {
     tar -xvzf Python-${VERSION}.tgz
     cd Python-${VERSION} || exit 1
 
-    ./configure --enable-optimizations --without-lto
+    ./configure --enable-optimizations --with-lto
     CPU_COUNT=$(sysctl -n hw.ncpu)
     gmake -j "$CPU_COUNT" 
 

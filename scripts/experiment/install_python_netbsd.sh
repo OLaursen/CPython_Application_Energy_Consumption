@@ -28,9 +28,21 @@ install_python() {
 
     ./configure --enable-optimizations --with-lto
     CPU_COUNT=$(sysctl -n hw.ncpu)
-    gmake -j "$CPU_COUNT" profile-opt
-    doas gmake altinstall
+    
+    
+    #Create swapfiles for lto
+    doas dd if=/dev/zero of=/swapfile bs=1m count=2048
+    doas chmod 600 /swapfile
+    doas mkswap /swapfile
+    doas swapon /swapfile
 
+    #make lto
+    gmake -j "$CPU_COUNT" profile-opt 
+    doas gmake altinstall
+    
+    #Remove swapfile
+    doas swapoff /swapfile
+    doas rm /swapfile
     cd ..
     rm -rf Python-${VERSION} Python-${VERSION}.tgz
 
