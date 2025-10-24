@@ -25,9 +25,10 @@ install_python() {
     tar -xvzf Python-${VERSION}.tgz
     cd Python-${VERSION} || exit 1
 
-    ./configure --enable-optimizations --with-lto
+    ./configure --enable-optimizations --without-lto
     CPU_COUNT=$(sysctl -n hw.ncpu)
-    gmake -j "$CPU_COUNT" profile-opt
+    gmake -j "$CPU_COUNT" 
+    gmake profile-opt -j1
     doas gmake altinstall
 
     cd ..
