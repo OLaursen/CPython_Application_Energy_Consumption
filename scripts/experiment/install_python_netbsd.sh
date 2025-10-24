@@ -33,16 +33,23 @@ install_python() {
     #Create swapfiles for lto
     doas dd if=/dev/zero of=/swapfile bs=1m count=2048
     doas chmod 600 /swapfile
-    doas mkswap /swapfile
-    doas swapon /swapfile
+    doas swapctl -a /swapfile
+    echo "Swap created"
+    swapctl -l
 
     #make lto
     gmake -j "$CPU_COUNT" profile-opt 
     doas gmake altinstall
     
     #Remove swapfile
-    doas swapoff /swapfile
-    doas rm /swapfile
+    if [swapctl -l | grep -q "swapfile"]; then
+        doas swapctl -d /swapfile
+        doas rm -f "swapfile"
+        echo "Swapå removed"
+    else
+        echo "Swap not active"
+    fi
+
     cd ..
     rm -rf Python-${VERSION} Python-${VERSION}.tgz
 
