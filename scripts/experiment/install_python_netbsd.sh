@@ -26,7 +26,7 @@ install_python() {
     tar -xvzf Python-${VERSION}.tgz
     cd Python-${VERSION} || exit 1
 
-    ./configure --enable-optimizations --with-lto
+    ./configure --enable-optimizations
     CPU_COUNT=$(sysctl -n hw.ncpu)
     
     
