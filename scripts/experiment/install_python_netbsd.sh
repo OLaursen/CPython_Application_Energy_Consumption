@@ -1,5 +1,5 @@
 #!/bin/sh
-
+export PATH=$PATH:/usr/pkg/bin:/usr/pkg/sbin
 set -e
 #Iso image url: https://cdn.openbsd.org/pub/OpenBSD/7.7/arm64/install77.iso
 # Function to install a specific Python version with optimizations on FreeBSD
@@ -43,7 +43,7 @@ install_python() {
     # Install pyperformance if not already present
     if ! "$PYTHON_BIN" -m pip show pyperformance >/dev/null 2>&1; then
         echo "Installing pyperformance for $PYTHON_BIN..."
-        "$PYTHON_BIN" -m pip install --upgrade pip setuptools wheel
+        "$PYTHON_BIN" -m pip install --upgrade pip
         "$PYTHON_BIN" -m pip install pyperformance
     else
         echo "pyperformance is already installed for $PYTHON_BIN."
