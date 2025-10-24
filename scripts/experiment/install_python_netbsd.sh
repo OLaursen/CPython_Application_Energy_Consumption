@@ -1,5 +1,5 @@
 #!/bin/sh
-export PATH=$PATH:/usr/pkg/bin:/usr/pkg/sbin
+
 set -e
 #Iso image url: https://cdn.openbsd.org/pub/OpenBSD/7.7/arm64/install77.iso
 # Function to install a specific Python version with optimizations on FreeBSD
@@ -18,7 +18,7 @@ install_python() {
 
     # Install build dependencies
     pkgin update
-    doas pkgin gmake git bash wget curl \ pkgconf libffi readline sqlite3 \ openssl zlib xz tk bzip2 lzma
+    doas pkgin in gmake git bash wget curl \ pkgconf libffi readline sqlite3 \ openssl zlib xz tk bzip2 lzma
 
     # Fetch and compile Python from source
     cd /tmp || exit 1
