@@ -26,7 +26,7 @@ install_python() {
     tar -xvzf Python-${VERSION}.tgz
     cd Python-${VERSION} || exit 1
 
-    ./configure --enable-optimizations
+    ./configure --enable-optimizations --with-lto
     CPU_COUNT=$(sysctl -n hw.ncpu)
     
     
@@ -45,7 +45,7 @@ install_python() {
     if [swapctl -l | grep -q "swapfile"]; then
         doas swapctl -d /swapfile
         doas rm -f "swapfile"
-        echo "Swapå removed"
+        echo "Swap removed"
     else
         echo "Swap not active"
     fi
@@ -70,10 +70,10 @@ install_python() {
 }
 
 # Install desired Python versions
-install_python "3.9.22"
+#install_python "3.9.22"
 #install_python "3.10.17"
 #install_python "3.11.12"
 #install_python "3.12.10"
-#install_python "3.13.3"
+install_python "3.13.3"
 
 echo "Installation complete!"
