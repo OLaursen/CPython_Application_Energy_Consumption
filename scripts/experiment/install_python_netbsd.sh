@@ -1,4 +1,5 @@
 #!/bin/sh
+export PATH=$PATH:/usr/pkg/bin:/usr/pkg/sbin
 set -e
 #Iso image url: https://cdn.openbsd.org/pub/OpenBSD/7.7/arm64/install77.iso
 # Function to install a specific Python version with optimizations on FreeBSD
