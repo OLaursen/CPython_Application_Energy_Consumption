@@ -36,11 +36,16 @@ install_python() {
     CPU_COUNT=$(sysctl -n hw.ncpu)
     
     echo "Create temporary swapfile for lto..."
-    doas dd if=/dev/zero of=$SWAPFILE bs=1m count=2048
-    doas chmod 600 $SWAPFILE
-    doas swapctl -a $SWAPFILE
-    echo "Swap created"
-    /sbin/swapctl -l
+    if ! swapctl -l | grep -q "$SWAPFILE"; then
+        doas dd if=/dev/zero of=$SWAPFILE bs=1m count=2048
+        doas chmod 600 $SWAPFILE
+        doas swapctl -a $SWAPFILE
+        echo "Swap created"
+        /sbin/swapctl -l
+    else
+        echo "Swapfile already exists"
+    fi
+   
 
     echo "Making LTO optimized build..."
     gmake -j "$CPU_COUNT" profile-opt 
