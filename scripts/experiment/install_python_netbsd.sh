@@ -10,6 +10,7 @@ install_python() {
     PYTHON_SRC="Python-${VERSION}"
     PYTHON_TGZ="${PYTHON_SRC}.tgz"
     SWAPFILE="/swapfile"
+    BUILDDIR="$HOME/build/python${MAJOR_MINOR}"
 
     # Check if Python version is already installed
     if [ -x "$PYTHON_BIN" ] && [ "$($PYTHON_BIN --version 2>&1)" = "Python $VERSION" ]; then
@@ -25,15 +26,18 @@ install_python() {
         readline sqlite3 openssl zlib xz tk bzip2
 
     # Fetch and compile Python from source
-    cd /tmp || exit 1
+    mkdir -p $BUILDDIR
+    cd $BUILDDIR
+
     echo "Downloading $PYTHON_SRC..."
     ftp https://www.python.org/ftp/python/${VERSION}/${PYTHON_SRC}.tgz
+
     tar -xzf "$PYTHON_TGZ"
     cd "$PYTHON_SRC" || exit 1
 
     echo "Configuring and compiling Python $VERSION..."
     ./configure --prefix=/usr/local --enable-optimizations --with-lto
-    CPU_COUNT=$(sysctl -n hw.ncpu)
+    #CPU_COUNT=$(sysctl -n hw.ncpu)
     
     echo "Create temporary swapfile for lto..."
     if ! swapctl -l | grep -q "$SWAPFILE"; then
@@ -48,10 +52,10 @@ install_python() {
    
 
     echo "Making LTO optimized build..."
-    gmake -j "$CPU_COUNT" profile-opt 
+    gmake -j1 profile-opt 
     doas gmake altinstall
     
-    echo "Deleteing temporary swapfile.."
+    echo "Deleting temporary swapfile.."
     if /sbin/swapctl -l | grep -q "$SWAPFILE"; then
         doas swapctl -d $SWAPFILE
         doas rm -f $SWAPFILE
