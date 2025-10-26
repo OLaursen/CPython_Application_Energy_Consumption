@@ -22,12 +22,12 @@ install_python() {
     # Install build dependencies
     pkgin -y update
     doas pkgin -y in gmake git bash wget curl pkgconf libffi \
-        readline sqlite3 openssl zlib xz tk bzip2 lzma
+        readline sqlite3 openssl zlib xz tk bzip2
 
     # Fetch and compile Python from source
     cd /tmp || exit 1
     echo "Downloading $PYTHON_SRC..."
-    ftp -o https://www.python.org/ftp/python/${VERSION}/${PYTHON_SRC}.tgz
+    ftp https://www.python.org/ftp/python/${VERSION}/${PYTHON_SRC}.tgz
     tar -xzf "$PYTHON_TGZ"
     cd "$PYTHON_SRC" || exit 1
 

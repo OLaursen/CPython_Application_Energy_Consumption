@@ -28,7 +28,7 @@ install_python() {
     echo "Fetching python source"
     cd /tmp || exit 1
     ftp https://www.python.org/ftp/python/${VERSION}/${PYTHON_TGZ}
-    tar -xzf "$PYTHON_TGZ}"
+    tar -xzf "$PYTHON_TGZ"
     cd "$PYTHON_SRC" || exit 1
 
     echo "Configuring and compiling Python $VERSION..."
