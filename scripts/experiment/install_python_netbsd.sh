@@ -31,17 +31,16 @@ install_python() {
 
     echo "Downloading $PYTHON_SRC..."
     ftp https://www.python.org/ftp/python/${VERSION}/${PYTHON_SRC}.tgz
-
     tar -xzf "$PYTHON_TGZ"
     cd "$PYTHON_SRC" || exit 1
 
     echo "Configuring and compiling Python $VERSION..."
-    ./configure --prefix=/usr/local --enable-optimizations --with-lto
+    ./configure --prefix=/usr/local --enable-optimizations --with-lto --with-openssl=/usr/pkg
     #CPU_COUNT=$(sysctl -n hw.ncpu)
     
     echo "Create temporary swapfile for lto..."
     if ! swapctl -l | grep -q "$SWAPFILE"; then
-        doas dd if=/dev/zero of=$SWAPFILE bs=1m count=2048
+        doas dd if=/dev/zero of=$SWAPFILE bs=1m count=4096
         doas chmod 600 $SWAPFILE
         doas swapctl -a $SWAPFILE
         echo "Swap created"
@@ -52,7 +51,7 @@ install_python() {
    
 
     echo "Making LTO optimized build..."
-    gmake -j1 profile-opt 
+    gmake -j 2 profile-opt 
     doas gmake altinstall
     
     echo "Deleting temporary swapfile.."
@@ -89,10 +88,10 @@ install_python() {
 
 # Install desired Python versions
 #install_python "3.9.22"
-install_python "3.10.18"
+#install_python "3.10.18"
 install_python "3.11.14"
-install_python "3.12.11"
-install_python "3.13.9"
+#install_python "3.12.11"
+#install_python "3.13.9"
 #install_python "3.14.0"
 
 echo "Installation complete!"
