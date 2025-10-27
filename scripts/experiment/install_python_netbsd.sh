@@ -51,7 +51,7 @@ install_python() {
    
 
     echo "Making LTO optimized build..."
-    gmake -j 2 profile-opt 
+    gmake -j 3 profile-opt 
     doas gmake altinstall
     
     echo "Deleting temporary swapfile.."
@@ -88,10 +88,10 @@ install_python() {
 
 # Install desired Python versions
 #install_python "3.9.22"
-#install_python "3.10.18"
+install_python "3.10.18"
 install_python "3.11.14"
-#install_python "3.12.11"
-#install_python "3.13.9"
-#install_python "3.14.0"
+install_python "3.12.11"
+install_python "3.13.9"
+install_python "3.14.0"
 
 echo "Installation complete!"
