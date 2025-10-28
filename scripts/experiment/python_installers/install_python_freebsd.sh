@@ -50,10 +50,11 @@ install_python() {
 }
 
 # Install desired Python versions
-install_python "3.9.22"
-#install_python "3.10.17"
-#install_python "3.11.12"
-#install_python "3.12.10"
-install_python "3.13.3"
+#install_python "3.9.22"
+install_python "3.10.18"
+install_python "3.11.14"
+install_python "3.12.11"
+install_python "3.13.9"
+#install_python "3.14.0"
 
 echo "Installation complete!"
