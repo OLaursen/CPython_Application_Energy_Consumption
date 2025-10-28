@@ -12,13 +12,12 @@ install_python() {
     BUILDDIR="$HOME/build/python${MAJOR_MINOR}"
 
     # Check if Python version is already installed
-    if [ -x "$PYTHON_BIN" ] && [ "$($PYTHON_BIN --version 2>&1)" = "Python $VERSION" ]; then
-        echo "$PYTHON_SRC is already installed."
-        return
-    fi
+    #if [ -x "$PYTHON_BIN" ] && [ "$($PYTHON_BIN --version 2>&1)" = "Python $VERSION" ]; then
+    #    echo "$PYTHON_SRC is already installed."
+    #    return
+    #fi
 
     echo "Installing $PYTHON_SRC with optimizations..."
-
     # Install build dependencies
     pkgin -y update
     doas pkgin -y in gmake git bash wget curl pkgconf libffi \
@@ -35,12 +34,17 @@ install_python() {
     cd "$PYTHON_SRC" || exit 1
 
     echo "Configuring and compiling Python $VERSION..."
-    ./configure --prefix=/usr/local --enable-optimizations --with-lto --with-openssl=/usr/pkg CPPFLAGS="-I/usr/pkg/include" LDFLAGS="-L/usr/pkg/lib"
+    
+    #Helping python find openssl
+    export CPPFLAGS="-I/usr/pkg/include"
+    export LDFLAGS="-L/usr/pkg/lib"
+    export LD_LIBRARY_PATH="/usr/pkg/lib"
+    ./configure --prefix=/usr/local --enable-optimizations --with-openssl=/usr/pkg
     CPU_COUNT=$(sysctl -n hw.ncpu)
     
     echo "Create temporary swapfile for lto..."
     if ! swapctl -l | grep -q "$SWAPFILE"; then
-        doas dd if=/dev/zero of=$SWAPFILE bs=1m count=4096
+        doas dd if=/dev/zero of=$SWAPFILE bs=1m count=2048
         doas chmod 600 $SWAPFILE
         doas swapctl -a $SWAPFILE
         echo "Swap created"
@@ -49,8 +53,8 @@ install_python() {
         echo "Swapfile already exists"
     fi
    
-    
     echo "Making LTO optimized build..."
+    date
     gmake -j $CPU_COUNT profile-opt 
     doas gmake altinstall
     
@@ -73,6 +77,7 @@ install_python() {
     fi
     
     echo "Ensuring pip is installed..."
+    date
     # Ensure pip is installed
     "python${MAJOR_MINOR}" -m ensurepip
 
@@ -90,6 +95,7 @@ install_python() {
         echo "pyperformance is already installed for $PYTHON_BIN."
     fi
     echo "Finished installing Python $VERSION"
+    date
 }
 
 # Install desired Python versions
@@ -100,4 +106,5 @@ install_python "3.11.14"
 #install_python "3.13.9"
 #install_python "3.14.0"
 
+pyperformance compile_all
 echo "Installation complete!"
