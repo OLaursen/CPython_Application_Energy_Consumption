@@ -36,10 +36,14 @@ install_python() {
     echo "Configuring and compiling Python $VERSION..."
     
     #Helping python find openssl
-    export CPPFLAGS="-I/usr/pkg/include"
-    export LDFLAGS="-L/usr/pkg/lib"
-    export LD_LIBRARY_PATH="/usr/pkg/lib"
-    ./configure --prefix=/usr/local --enable-optimizations --with-openssl=/usr/pkg
+    #Help Python find OpenSSL (headers + libs) and bake rpaths
+    export CPPFLAGS="-I/usr/pkg/include -I/usr/X11R7/include"
+    export LDFLAGS="-L/usr/pkg/lib -Wl,-R/usr/pkg/lib -L/usr/X11R7/lib -Wl,-R/usr/X11R7/lib"
+    export PKG_CONFIG_PATH="/usr/pkg/lib/pkgconfig:/usr/X11R7/lib/pkgconfig"
+
+    # (Optional, for debugging) show what pkg-config thinks:
+    pkg-config --cflags --libs openssl || true
+    ./configure --prefix=/usr/local --enable-optimizations --with-openssl=/usr/pkg/
     CPU_COUNT=$(sysctl -n hw.ncpu)
     
     echo "Create temporary swapfile for lto..."
@@ -58,7 +62,7 @@ install_python() {
     gmake -j $CPU_COUNT profile-opt 
     doas gmake altinstall
     
-    if [ ! -x "$PYTHON_BIN" -ne 0 ]; then
+    if [ ! -x "$PYTHON_BIN" ]; then
         echo "Build or installation failed for Python $VERSION"
         return
     fi
