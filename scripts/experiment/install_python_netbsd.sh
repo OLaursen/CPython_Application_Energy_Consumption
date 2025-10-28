@@ -1,6 +1,12 @@
 #!/bin/sh
 export PATH=$PATH:/usr/pkg/bin:/usr/pkg/sbin
 
+# Install build dependencies
+pkgin -y update
+doas pkgin -y in gmake git bash wget curl pkgconf libffi \
+    readline sqlite3 openssl zlib xz tk bzip2 \
+    gcc clang cmake autoconf automake libtool
+
 # Function to install a specific Python version with optimizations on NetBSD
 install_python() {
     VERSION=$1
@@ -18,11 +24,8 @@ install_python() {
     #fi
 
     echo "Installing $PYTHON_SRC with optimizations..."
-    # Install build dependencies
-    pkgin -y update
-    doas pkgin -y in gmake git bash wget curl pkgconf libffi \
-        readline sqlite3 openssl zlib xz tk bzip2 \
-        gcc clang cmake autoconf automake libtool
+    date
+    
 
     # Fetch and compile Python from source
     mkdir -p $BUILDDIR
@@ -36,7 +39,6 @@ install_python() {
     echo "Configuring and compiling Python $VERSION..."
     
     #Helping python find openssl
-    #Help Python find OpenSSL (headers + libs) and bake rpaths
     export CPPFLAGS="-I/usr/pkg/include -I/usr/X11R7/include"
     export LDFLAGS="-L/usr/pkg/lib -Wl,-R/usr/pkg/lib -L/usr/X11R7/lib -Wl,-R/usr/X11R7/lib"
     export PKG_CONFIG_PATH="/usr/pkg/lib/pkgconfig:/usr/X11R7/lib/pkgconfig"
@@ -48,7 +50,7 @@ install_python() {
     
     echo "Create temporary swapfile for lto..."
     if ! swapctl -l | grep -q "$SWAPFILE"; then
-        doas dd if=/dev/zero of=$SWAPFILE bs=1m count=2048
+        doas dd if=/dev/zero of=$SWAPFILE bs=1m count=2048 #For rpi3b+ ~1,5gb is needed
         doas chmod 600 $SWAPFILE
         doas swapctl -a $SWAPFILE
         echo "Swap created"
@@ -81,14 +83,10 @@ install_python() {
     fi
     
     echo "Ensuring pip is installed..."
-    date
-    # Ensure pip is installed
     "python${MAJOR_MINOR}" -m ensurepip
 
     echo "Verifying installation..."
-    # Verify installation
     "python${MAJOR_MINOR}" --version
-    which "python${MAJOR_MINOR}"
 
     echo "Install pyperformance if not already present"
     if ! "python${MAJOR_MINOR}" -m pip show pyperformance >/dev/null 2>&1; then
@@ -100,15 +98,16 @@ install_python() {
     fi
     echo "Finished installing Python $VERSION"
     date
+    echo "Compilin"
 }
 
 # Install desired Python versions
 #install_python "3.9.22"
 install_python "3.10.18"
 install_python "3.11.14"
-#install_python "3.12.11"
-#install_python "3.13.9"
-#install_python "3.14.0"
+install_python "3.12.11"
+install_python "3.13.9"
+install_python "3.14.0"
 
 pyperformance compile_all
 echo "Installation complete!"
