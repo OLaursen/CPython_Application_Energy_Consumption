@@ -36,7 +36,7 @@ install_python() {
 
     echo "Configuring and compiling Python $VERSION..."
     ./configure --prefix=/usr/local --enable-optimizations --with-lto --with-openssl=/usr/pkg
-    #CPU_COUNT=$(sysctl -n hw.ncpu)
+    CPU_COUNT=$(sysctl -n hw.ncpu)
     
     echo "Create temporary swapfile for lto..."
     if ! swapctl -l | grep -q "$SWAPFILE"; then
@@ -51,7 +51,7 @@ install_python() {
    
 
     echo "Making LTO optimized build..."
-    gmake -j 3 profile-opt 
+    gmake -j $CPU_COUNT profile-opt 
     doas gmake altinstall
     
     echo "Deleting temporary swapfile.."
@@ -73,13 +73,14 @@ install_python() {
 
     echo "Veryting installation..."
     # Verify installation
-    "$PYTHON_BIN" --version
+    "Python${MAJOR_MINOR}" --version
+    which Python${MAJOR_MINOR}
 
     echo "Install pyperformance if not already present"
-    if ! "$PYTHON_BIN" -m pip show pyperformance >/dev/null 2>&1; then
+    if ! "Python${MAJOR_MINOR}" -m pip show pyperformance >/dev/null 2>&1; then
         echo "Installing pyperformance for $PYTHON_BIN..."
-        "$PYTHON_BIN" -m pip install --upgrade pip
-        "$PYTHON_BIN" -m pip install pyperformance
+        "Python${MAJOR_MINOR}" -m pip install --upgrade pip
+        "Python${MAJOR_MINOR}"  -m pip install pyperformance
     else
         echo "pyperformance is already installed for $PYTHON_BIN."
     fi
