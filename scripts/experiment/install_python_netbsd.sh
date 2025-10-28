@@ -22,7 +22,8 @@ install_python() {
     # Install build dependencies
     pkgin -y update
     doas pkgin -y in gmake git bash wget curl pkgconf libffi \
-        readline sqlite3 openssl zlib xz tk bzip2
+        readline sqlite3 openssl zlib xz tk bzip2 \
+        gcc clang cmake autoconf automake libtool
 
     # Fetch and compile Python from source
     mkdir -p $BUILDDIR
@@ -34,7 +35,7 @@ install_python() {
     cd "$PYTHON_SRC" || exit 1
 
     echo "Configuring and compiling Python $VERSION..."
-    ./configure --prefix=/usr/local --enable-optimizations --with-lto --with-openssl=/usr/pkg
+    ./configure --prefix=/usr/local --enable-optimizations --with-lto --with-openssl=/usr/pkg CPPFLAGS="-I/usr/pkg/include" LDFLAGS="-L/usr/pkg/lib"
     CPU_COUNT=$(sysctl -n hw.ncpu)
     
     echo "Create temporary swapfile for lto..."
@@ -48,10 +49,19 @@ install_python() {
         echo "Swapfile already exists"
     fi
    
-
+    
     echo "Making LTO optimized build..."
     gmake -j $CPU_COUNT profile-opt 
     doas gmake altinstall
+    
+    if [ ! -x "$PYTHON_BIN" -ne 0 ]; then
+        echo "Build or installation failed for Python $VERSION"
+        return
+    fi
+
+    echo "Cleaning up build files..."
+    cd ..
+    rm -rf "$PYTHON_SRC" "$PYTHON_TGZ"
     
     echo "Deleting temporary swapfile.."
     if /sbin/swapctl -l | grep -q "$SWAPFILE"; then
@@ -61,19 +71,15 @@ install_python() {
     else
         echo "Swap not active"
     fi
-
-    echo "Cleaning up build files..."
-    cd ..
-    rm -rf "$PYTHON_SRC" "$PYTHON_TGZ"
     
     echo "Ensuring pip is installed..."
     # Ensure pip is installed
-    "$PYTHON_BIN" -m ensurepip
+    "python${MAJOR_MINOR}" -m ensurepip
 
-    echo "Veryting installation..."
+    echo "Verifying installation..."
     # Verify installation
     "python${MAJOR_MINOR}" --version
-    which Python${MAJOR_MINOR}
+    which "python${MAJOR_MINOR}"
 
     echo "Install pyperformance if not already present"
     if ! "python${MAJOR_MINOR}" -m pip show pyperformance >/dev/null 2>&1; then
@@ -90,8 +96,8 @@ install_python() {
 #install_python "3.9.22"
 install_python "3.10.18"
 install_python "3.11.14"
-install_python "3.12.11"
-install_python "3.13.9"
-install_python "3.14.0"
+#install_python "3.12.11"
+#install_python "3.13.9"
+#install_python "3.14.0"
 
 echo "Installation complete!"
