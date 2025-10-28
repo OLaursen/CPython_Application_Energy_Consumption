@@ -1,5 +1,4 @@
 #!/bin/sh
-set -eu
 export PATH=$PATH:/usr/pkg/bin:/usr/pkg/sbin
 
 # Function to install a specific Python version with optimizations on NetBSD
@@ -73,14 +72,14 @@ install_python() {
 
     echo "Veryting installation..."
     # Verify installation
-    "Python${MAJOR_MINOR}" --version
+    "python${MAJOR_MINOR}" --version
     which Python${MAJOR_MINOR}
 
     echo "Install pyperformance if not already present"
-    if ! "Python${MAJOR_MINOR}" -m pip show pyperformance >/dev/null 2>&1; then
+    if ! "python${MAJOR_MINOR}" -m pip show pyperformance >/dev/null 2>&1; then
         echo "Installing pyperformance for $PYTHON_BIN..."
-        "Python${MAJOR_MINOR}" -m pip install --upgrade pip
-        "Python${MAJOR_MINOR}"  -m pip install pyperformance
+        "python${MAJOR_MINOR}" -m pip install --upgrade pip
+        "python${MAJOR_MINOR}"  -m pip install pyperformance
     else
         echo "pyperformance is already installed for $PYTHON_BIN."
     fi
