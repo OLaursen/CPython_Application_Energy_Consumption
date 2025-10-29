@@ -25,7 +25,6 @@ install_python() {
 
     echo "Installing $PYTHON_SRC with optimizations..."
     date
-    
 
     # Fetch and compile Python from source
     mkdir -p $BUILDDIR
@@ -103,11 +102,11 @@ install_python() {
 
 # Install desired Python versions
 #install_python "3.9.22"
-install_python "3.10.18"
-install_python "3.11.14"
+#install_python "3.10.18"
+#install_python "3.11.14"
 install_python "3.12.11"
-install_python "3.13.9"
-install_python "3.14.0"
+#install_python "3.13.9"
+#install_python "3.14.0"
 
-pyperformance compile_all
+
 echo "Installation complete!"
