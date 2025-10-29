@@ -4,8 +4,27 @@ export PATH=$PATH:/usr/pkg/bin:/usr/pkg/sbin
 # Install build dependencies
 pkgin -y update
 doas pkgin -y in gmake git bash wget curl pkgconf libffi \
-    readline sqlite3 openssl zlib xz tk bzip2 \
-    gcc clang cmake autoconf automake libtool
+    readline sqlite3 openssl zlib xz tk bzip2 libuuid \
+    gcc clang cmake autoconf automake libtool mpdecimal \
+    zstd
+
+#Dependencies according to NetBSD homepage
+: 'com
+
+3.10:
+mktools pkgconf cwrappers
+libffi libuuid readline sqlite3 libffi readline sqlite3
+
+3.11:
+mktools pkgconf cwrappers
+libffi libuuid readline sqlite3 libffi readline sqlite3
+
+3.13
+mpdecimal 
+3.14
+zstd 
+
+'
 
 # Function to install a specific Python version with optimizations on NetBSD
 install_python() {
