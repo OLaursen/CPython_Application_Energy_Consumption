@@ -88,8 +88,8 @@ install_python() {
     fi
 
     echo "Cleaning up build files..."
-    cd ..
-    rm -rf "$PYTHON_SRC" "$PYTHON_TGZ"
+    #cd ..
+    #rm -rf "$PYTHON_SRC" "$PYTHON_TGZ"
     
     echo "Deleting temporary swapfile.."
     if /sbin/swapctl -l | grep -q "$SWAPFILE"; then
