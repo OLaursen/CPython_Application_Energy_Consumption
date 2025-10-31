@@ -1,71 +1,43 @@
 #!/bin/sh
 export PATH=$PATH:/usr/pkg/bin:/usr/pkg/sbin
 
+#Before running this script, ensure that a version of python is available and that psutil is manually installed and corrected:
+#### Python
+:'
+    # Install build dependencies
+    pkgin -y update
+    doas pkgin -y in gmake git bash wget curl pkgconf libffi \
+        readline sqlite3 openssl zlib xz tk bzip2 libuuid \
+        gcc clang cmake autoconf automake libtool mpdecimal \
+        zstd 
 
-# Install build dependencies
-pkgin -y update
-doas pkgin -y in gmake git bash wget curl pkgconf libffi \
-    readline sqlite3 openssl zlib xz tk bzip2 libuuid \
-    gcc clang cmake autoconf automake libtool mpdecimal \
-    zstd 
-# Install Python Seperate from experiement
-doas pkgin in python39
-python3.9 -m ensurepip
-python3.9 -m pip install --upgrade pip
+    # Install Python Seperate from experiement
+    doas pkgin in python39
+    python3.9 -m ensurepip
+    python3.9 -m pip install --upgrade pip
+
+'
+
+#### Psutil
+:'
+    Update pkgin
+    ftp https://files.pythonhosted.org/packages/source/p/psutil/psutil-7.1.2.tar.gz
+    tar -xzf psutil-7.1.2.tar.gz
+    cd psutil-7.1.2
+'
+#Then within the "kinfo_getfile" method find the line "psutil_debug("exceeded INT_MAX")" and add the missing ";"
+#Then from within the psutil-7.1.2 directory run():
+:'
+    python3.9 -m pip install . --no-binary=:all:
+'
+
 python3.9 -m pip install pyperformance
-
-
-# Function to install a specific Python version with optimizations on NetBSD
-install_python() {
-    VERSION=$1
-    MAJOR_MINOR=$(echo "$VERSION" | cut -d. -f1,2)
-    PYTHON_BIN="/usr/local/bin/python${MAJOR_MINOR}"
-    PYTHON_SRC="Python-${VERSION}"
-    PYTHON_TGZ="${PYTHON_SRC}.tgz"
-    SWAPFILE="/swapfile"
-    BUILDDIR="~/build/python${MAJOR_MINOR}"
-
-    # Check if Python version is already installed
-    #if [ -x "$PYTHON_BIN" ] && [ "$($PYTHON_BIN --version 2>&1)" = "Python $VERSION" ]; then
-    #    echo "$PYTHON_SRC is already installed."
-    #    return
-    #fi
-
-    echo "Installing $PYTHON_SRC with optimizations..."
-    date
-
-    # Fetch and compile Python from source
-    mkdir -p $BUILDDIR
-    cd $BUILDDIR
-
-    echo "Downloading $PYTHON_SRC..."
-    ftp https://www.python.org/ftp/python/${VERSION}/${PYTHON_SRC}.tgz
-    tar -xzf "$PYTHON_TGZ"
-    cd "$PYTHON_SRC" || exit 1
-
-    echo "Configuring and compiling Python $VERSION..."
+python3.9 -m pyperformance compile_all ./benchmark.conf
     
-    #Helping python find openssl
-    export CC=gcc
-    export CXX=g++
-    export CPPFLAGS="-I/usr/pkg/include -I/usr/X11R7/include"
-    export LDFLAGS="-L/usr/pkg/lib -Wl,-R/usr/pkg/lib -L/usr/X11R7/lib -Wl,-R/usr/X11R7/lib"
-    export PKG_CONFIG_PATH="/usr/pkg/lib/pkgconfig:/usr/X11R7/lib/pkgconfig"
 
 
-    ./configure --prefix=/usr/local --with-lto --with-openssl=/usr/pkg/
-    echo "$PYTHON_SRC has been configured, and ready for compilation."
-
-    
-}
-
-# Install desired Python versions
-#install_python "3.9.22"
-install_python "3.13.9" # needed for running pyperformance on NetBSD
-install_python "3.12.11"
-install_python "3.11.14"
-install_python "3.10.18"
-#install_python "3.14.0"
-
-
-echo "Installation complete!"
+echo which python3.10
+echo which python3.11
+echo which python3.12
+echo which python3.13
+echo which python3.14
