@@ -31,14 +31,14 @@ cd psutil-7.1.2
 python3.9 -m pip install . --no-binary=:all:
 
 #Download Cpython repo for benchmarks
-mkdir -p ~/cpython ~/pybench_results ~/pybench_builds
-cd ~/cpython 
+mkdir -p ~/pybench_results ~/pybench_builds
+cd
 git clone https://github.com/python/cpython.git
 git fetch --tags
 
 
 cd
-cd cpython_application_energy_consumption/scripts/experiment/
+cd ~/cpython_application_energy_consumption/scripts/experiment/
 python3.9 -m pip install pyperformance
 python3.9 -m pyperformance compile_all ./benchmark.conf
     
