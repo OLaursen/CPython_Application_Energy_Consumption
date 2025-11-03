@@ -9,7 +9,7 @@ doas pkgin -y update
 doas pkgin -y in gmake git bash wget curl pkgconf libffi \
         readline sqlite3 openssl zlib xz tk bzip2 libuuid \
         gcc clang cmake autoconf automake libtool mpdecimal \
-        zstd 
+        zstd tcl
 
 # Install Python Seperate from experiement
 doas pkgin in python39
@@ -36,6 +36,11 @@ cd
 git clone https://github.com/python/cpython.git
 git fetch --tags
 
+#Before compile and run:
+export CPPFLAGS="-I/usr/pkg/include"
+export LDFLAGS="-L/usr/pkg/lib -Wl,-R/usr/pkg/lib"
+export PKG_CONFIG_PATH="/usr/pkg/lib/pkgconfig"
+export CFLAGS="-std=gnu99 -D_GNU_SOURCE"
 
 cd
 cd ~/cpython_application_energy_consumption/scripts/experiment/
