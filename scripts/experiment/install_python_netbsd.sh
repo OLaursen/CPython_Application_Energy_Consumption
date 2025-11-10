@@ -1,9 +1,6 @@
 #!/bin/sh
 export PATH=$PATH:/usr/pkg/bin:/usr/pkg/sbin
 
-#Before running this script, ensure that a version of python is available and that psutil is manually installed and corrected:
-#### Python
-
 # Install build dependencies
 doas pkgin -y update
 doas pkgin -y in gmake git bash wget curl pkgconf libffi \
@@ -12,11 +9,9 @@ doas pkgin -y in gmake git bash wget curl pkgconf libffi \
         zstd tcl
 
 # Install Python Seperate from experiement
-doas pkgin in python39
-python3.9 -m ensurepip
-python3.9 -m pip install --upgrade pip
-
-
+doas pkgin in python313 # At the time of writing it's 3.13.9
+python3.13 -m ensurepip
+python3.13 -m pip install --upgrade pip
 
 #### Manually install Psutil
 cd /tmp
@@ -26,31 +21,25 @@ tar -xzf psutil-7.1.2.tar.gz
 cd psutil-7.1.2
 
 #Then within the "kinfo_getfile" method find the line "psutil_debug("exceeded INT_MAX")" and add the missing ";"
-#Then from within the psutil-7.1.2 directory run():
-
-python3.9 -m pip install . --no-binary=:all:
+#Then from within the psutil-7.1.2 directory run:
+python3.13 -m pip install . --no-binary=:all:
 
 #Download Cpython repo for benchmarks
 mkdir -p ~/pybench_results ~/pybench_builds
 cd
 git clone https://github.com/python/cpython.git
-git fetch --tags
+git fetch --tags #Needed inorder to compile python verions via tags
 
-#Before compile and run:
+#Ensures openssl can be found:
 export CPPFLAGS="-I/usr/pkg/include"
 export LDFLAGS="-L/usr/pkg/lib -Wl,-R/usr/pkg/lib"
 export PKG_CONFIG_PATH="/usr/pkg/lib/pkgconfig"
 export CFLAGS="-std=gnu99 -D_GNU_SOURCE"
+#Use all available cores
+export MAKEFLAGS="-j$(sysctl -n hw.ncpu)" 
 
-cd
-cd ~/cpython_application_energy_consumption/scripts/experiment/
-python3.9 -m pip install pyperformance
-python3.9 -m pyperformance compile_all ./benchmark.conf
+python3.13 -m pip install pyperformance
+python3.13 -m pyperformance compile_all ~/cpython_application_energy_consumption/scripts/experiment/benchmark.conf
     
-
-
-echo which python3.10
-echo which python3.11
-echo which python3.12
 echo which python3.13
-echo which python3.14
+echo "Installation complete!"
