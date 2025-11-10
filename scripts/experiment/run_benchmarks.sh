@@ -5,7 +5,7 @@
 run_benchmarks() {
     PYTHON_BIN=$1
     PYTHON_PATH=$2 
-    $PYTHON_BIN -m pyperformance run --python=$PYTHON_PATH -o $PYTHON_BIN.json
+    $PYTHON_BIN -m pyperformance run --benchmark=2to3,chameloen,docutils,html5lib,sphinx,tornado_http --python=$PYTHON_PATH -o $PYTHON_BIN.json
 }
 
 # Script finds path to desired Python version
