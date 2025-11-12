@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
 import paramiko
 import time
+import csv
+import os
 import json
+from otii_tcp_client import otii_client
+
 
 class AppException(Exception):
     '''Application Exception'''
@@ -20,12 +24,9 @@ def run_benchmarks(rpi, linux, version, hostname, username, password):
         ssh_client.connect(hostname, username=username, password=password)
         print("Connection established.")
 
-        # print(f"Running command: {version} -m pyperf system tune")
-        # stdin, stdout, stderr = ssh_client.exec_command(f"sudo {version} -m pyperf system tune")
-
-        # # Wait for the command to complete and fetch outputs
-        # exit_status = stdout.channel.recv_exit_status()
-        # print(f"Command completed with exit status: {exit_status}")
+        # Wait for the command to complete and fetch outputs
+        exit_status = stdout.channel.recv_exit_status()
+        print(f"Command completed with exit status: {exit_status}")
 
         # Execute the command
         print(f"Running command: {command}")
@@ -36,9 +37,9 @@ def run_benchmarks(rpi, linux, version, hostname, username, password):
         print(f"Command completed with exit status: {exit_status}")
 
         # Print the standard output and error
-        # print("Standard Output:")
-        # for line in stdout.read().decode().splitlines():
-        #     print(line)
+        print("Standard Output:")
+        for line in stdout.read().decode().splitlines():
+            print(line)
 
         print("Standard Error:")
         for line in stderr.read().decode().splitlines():
@@ -71,15 +72,15 @@ def run_benchmarks(rpi, linux, version, hostname, username, password):
 
     # Get statistics for the recording
     time.sleep(10)
-    #recording = project.get_last_recording()
-    #info = recording.get_channel_info(device.id, 'mp')
-    #statistics_mp = recording.get_channel_statistics(device.id, 'mp', info['from'], info['to'])
+    recording = project.get_last_recording()
+    info = recording.get_channel_info(device.id, 'mp')
+    statistics_mp = recording.get_channel_statistics(device.id, 'mp', info['from'], info['to'])
     
-    #recording.rename(f"recording_{rpi}_{linux}_{version}")
+    recording.rename(f"recording_{rpi}_{linux}_{version}")
 
     # Assume info and statistics_mp are already defined
-    #duration = info["to"] - info["from"]
-    #energy_joules = statistics_mp["average"] * duration
+    duration = info["to"] - info["from"]
+    energy_joules = statistics_mp["average"] * duration
 
     # Column headers (must match order of data)
     headers = [
@@ -88,33 +89,33 @@ def run_benchmarks(rpi, linux, version, hostname, username, password):
     ]
 
     # Row of data to append
-    # row = [
-    #     info["from"],
-    #     info["to"],
-    #     info["offset"],
-    #     info["sample_rate"],
-    #     round(statistics_mp["min"], 5),
-    #     round(statistics_mp["max"], 5),
-    #     round(statistics_mp["average"], 5),
-    #     round(duration, 5),
-    #     round(energy_joules, 5)
-    # ]
+    row = [
+         info["from"],
+         info["to"],
+         info["offset"],
+         info["sample_rate"],
+         round(statistics_mp["min"], 5),
+         round(statistics_mp["max"], 5),
+         round(statistics_mp["average"], 5),
+         round(duration, 5),
+         round(energy_joules, 5)
+    ]
 
-    # file_path = f"../../results/results_{rpi}_{linux}_{version}.csv"
+    file_path = f"../../results/results_{rpi}_{linux}_{version}.csv"
 
     # Check if file exists
-    # file_exists = os.path.isfile(file_path)
+    file_exists = os.path.isfile(file_path)
 
     # Open the file in append mode
-    # with open(file_path, mode="a", newline="") as file:
-    #     writer = csv.writer(file)
+    with open(file_path, mode="a", newline="") as file:
+        writer = csv.writer(file)
         
-    #     # Write header if file is new
-    #     if not file_exists:
-    #         writer.writerow(headers)
+        # Write header if file is new
+        if not file_exists:
+            writer.writerow(headers)
         
         # Write the data row
-        # writer.writerow(row)
+        writer.writerow(row)
 
 
 
@@ -127,60 +128,54 @@ def main(rpi, linux, version, hostname, username, password):
         run_benchmarks(rpi, linux, version, hostname, username, password)
 
 if __name__ == '__main__':
-    #client = otii_client.OtiiClient()
-    #with client.connect() as otii:
-        # Get a reference to a Arc or Ace device
-        # devices = otii.get_devices()
-        # if len(devices) == 0:
-        #     raise AppException('No Arc or Ace connected!')
-        # device = devices[0]
+    client = otii_client.OtiiClient()
+    with client.connect() as otii:
+        #Get a reference to a Arc or Ace device
+        devices = otii.get_devices()
+        if len(devices) == 0:
+            raise AppException('No Arc or Ace connected!')
+        device = devices[0]
 
-        # Configure the device
-        # device.set_main_voltage(5.1)
-        # device.set_exp_voltage(4.9)
-        # device.set_max_current(2.5)
+        #Configure the device
+        device.set_main_voltage(5.1)
+        device.set_exp_voltage(4.9)
+        device.set_max_current(2.5)
 
         # Enable the main current channel
-        # device.enable_channel('mc', True)
-        # device.enable_channel('mp', True)
+        device.enable_channel('mc', True)
+        device.enable_channel('mp', True)
 
         # Get the active project
-        #project = otii.get_active_project()
+        project = otii.get_active_project()
         with open("credentials.json") as f:
             credentials = json.load(f)
             
             print(f"Running python 3.13")
             try:
-                main("RPi3B+", "Alpine", "python3.13", credentials["hostname"], credentials["username"], credentials["password"])
+                main("RPi4B", "NetBSD", "python3.13", credentials["hostname"], credentials["username"], credentials["password"])
                 time.sleep(5)
             except Exception as error:
                 print(f"Something went wrong: {error}.")
                 time.sleep(10)
             print(f"Running python 3.12")
             try:
-                main("RPi3B+", "Alpine", "python3.12", credentials["hostname"], credentials["username"], credentials["password"])
+                main("RPi4B", "NetBSD", "python3.12", credentials["hostname"], credentials["username"], credentials["password"])
                 time.sleep(5)
             except Exception as error:
                 print(f"Something went wrong: {error}.")
                 time.sleep(10)
-            print(f"Running python 3.11")
-            try:
-                main("RPi3B+", "Alpine", "python3.11", credentials["hostname"], credentials["username"], credentials["password"])
-                time.sleep(5)
-            except Exception as error:
-                print(f"Something went wrong: {error}.")
-                time.sleep(10)
+            # print(f"Running python 3.11")
+            # try:
+            #     main("RPi3B+", "Alpine", "python3.11", credentials["hostname"], credentials["username"], credentials["password"])
+            #     time.sleep(5)
+            # except Exception as error:
+            #     print(f"Something went wrong: {error}                        .")
+            #     time.sleep(10)
             print(f"Running python 3.10")
             try:
-                main("RPi3B+", "Alpine", "python3.10", credentials["hostname"], credentials["username"], credentials["password"])
+                main("RPi4B", "NetBSD", "python3.10", credentials["hostname"], credentials["username"], credentials["password"])
                 time.sleep(5)
             except Exception as error:
                 print(f"Something went wrong: {error}.")
                 time.sleep(10)
-            print(f"Running python 3.9")
-            try:
-                main("RPi3B+", "Alpine", "python3.9", credentials["hostname"], credentials["username"], credentials["password"])
-                time.sleep(5)
-            except Exception as error:
-                print(f"Something went wrong: {error}.")
-                time.sleep(10)
+            
