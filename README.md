@@ -32,3 +32,34 @@ pi@ubuntu:~$ free -h
 Mem:           896Mi       445Mi       354Mi       139Mi       313Mi       451Mi
 Swap:          2.0Gi          0B       2.0Gi
 
+## Running the experiment on NetBSD
+- Ensure that psutil is installed in the home folder. 
+- Ensure that sudo is installed an available for the user running the benchmarks. 
+- Can be a good idea to enable a swapfile when running on systems with low memory. 
+#### Setting up sudo
+doas pkgin -y in sudo
+Enable sudo for the user. I Uncommented the line:
+
+```bash
+%wheel ALL=(ALL:ALL) NOPASSWD: ALL
+```
+Inorder to enable passwordless sudo for wheel group users.
+
+#### Manually install Psutil
+```bash
+cd /tmp
+doas pkgin -y update
+ftp https://files.pythonhosted.org/packages/source/p/psutil/psutil-7.1.2.tar.gz
+tar -xzf psutil-7.1.2.tar.gz
+cd psutil-7.1.2
+```
+Then within the "kinfo_getfile" method find the line "psutil_debug("exceeded INT_MAX")" and add the missing ";"
+Then from within the psutil-7.1.2 directory run:
+
+#### Activitating swapfile
+Creating a 2gb swapfile named "swapfile". 
+```bash
+doas dd if=/dev/zero of=/swapfile bs=1m count=2048
+doas chmod 600 /swapfile
+doas swapctl -a /swapfile
+```
