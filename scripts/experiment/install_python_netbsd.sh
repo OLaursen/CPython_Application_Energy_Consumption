@@ -1,40 +1,74 @@
 #!/bin/sh
 export PATH=$PATH:/usr/pkg/bin:/usr/pkg/sbin
+install_python(){
+        VERSION=$1
+        MAJOR_MINOR=$(echo "$VERSION" | cut -d. -f1,2)
+        PYTHON_BIN="/usr/pkg/bin/python$MAJOR_MINOR"
+        PYTHON_SRC="Python-$VERSION"
+        PYTHON_TGZ="$PYTHON_SRC.tgz"
+        CPU_COUNT=$(sysctl -n hw.ncpu)
 
+        # Check if Python version is already installed
+        # if [ -x "$PYTHON_BIN" ] && [ "$($PYTHON_BIN --version 2>&1)" = "Python $VERSION" ]; then
+        #     echo "$PYTHON_SRC is already installed."
+        #     return
+        # fi
+
+        echo "Fetching Python from source"
+        mkdir -p $BUILDDIR
+        cd $BUILDDIR
+        echo "Downloading $PYTHON_SRC..."
+        ftp https://www.python.org/ftp/python/${VERSION}/${PYTHON_SRC}.tgz
+        tar -xzf "$PYTHON_TGZ"
+        cd "$PYTHON_SRC" || exit 1
+
+        #Ensures openssl can be found:
+        export CPPFLAGS="-I/usr/pkg/include"
+        export LDFLAGS="-L/usr/pkg/lib -Wl,-R/usr/pkg/lib"
+        export PKG_CONFIG_PATH="/usr/pkg/lib/pkgconfig"
+        export CFLAGS="-std=gnu99 -D_GNU_SOURCE"
+        echo "Configuring the build with optimizations..."
+        ./configure --prefix=/usr/local --enable-optimizations --with-openssl=/usr/pkg/
+        
+        
+        echo "Building Python $VERSION using $CPU_COUNT cores..."
+        gmake -j "$CPU_COUNT" profile-opt
+        doas gamke altinstall
+        if [ ! -x "$PYTHON_BIN" ]; then
+                echo "Build or installation failed for Python $VERSION"
+                return
+        fi
+        
+        echo "Cleaning up build files..."
+        cd ..
+        rm -rf "$PYTHON_SRC" "$PYTHON_TGZ"
+        
+        echo "Ensuring pip is installed..."
+        "python${MAJOR_MINOR}" -m ensurepip
+
+        echo "Verifying installation..."
+        "python${MAJOR_MINOR}" --version
+
+        echo "Install pyperformance if not already present"
+        if ! "python${MAJOR_MINOR}" -m pip show pyperformance >/dev/null 2>&1; then
+                echo "Installing pyperformance for $PYTHON_BIN..."
+                "python${MAJOR_MINOR}" -m pip install --upgrade pip
+                "python${MAJOR_MINOR}"  -m pip install pyperformance
+        else
+                echo "pyperformance is already installed for $PYTHON_BIN."
+        fi
+        echo "Finished installing Python $VERSION"
+        date
+
+}
 # Install build dependencies
 doas pkgin -y update
 doas pkgin -y in gmake git bash wget curl pkgconf libffi \
         readline sqlite3 openssl zlib xz tk bzip2 libuuid \
         gcc clang cmake autoconf automake libtool mpdecimal \
-        zstd tcl sudo python313 # At the time of writing it's 3.13.9
+        zstd tcl sudo # At the time of writing it's 3.13.9
 
-# Install Python Separate from experiement
-doas python3.13 -m ensurepip
-doas python3.13 -m pip install --upgrade pip
-
-# Manually downloaded and corrected psutil repository
-cd ~/psutil
-doas python3.13 -m pip install . --no-binary=:all:
-
-#Download Cpython repo for benchmarks
-mkdir -p ~/pybench_results ~/pybench_builds
-
-cd
-git clone https://github.com/python/cpython.git
-cd cpython
-git fetch --tags #Needed inorder to compile python verions via tags
-
-#Ensures openssl can be found:
-export CPPFLAGS="-I/usr/pkg/include"
-export LDFLAGS="-L/usr/pkg/lib -Wl,-R/usr/pkg/lib"
-export PKG_CONFIG_PATH="/usr/pkg/lib/pkgconfig"
-export CFLAGS="-std=gnu99 -D_GNU_SOURCE"
-
-#Use all cpu cores
-export MAKEFLAGS="-j$(sysctl -n hw.ncpu)" 
-doas python3.13 -m pip install pyperformance pyperf
-doas python3.13 -m pyperformance compile_all ~/cpython_application_energy_consumption/scripts/experiment/benchmark.conf
-
-mkdir -p ~/pybench_builds/
-echo which python3.13
+install_python "3.10.18"
+install_python "3.13.9"
+install_python "3.12.11"
 echo "Installation complete!"
