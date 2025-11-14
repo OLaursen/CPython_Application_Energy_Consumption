@@ -52,8 +52,7 @@ install_python() {
 
 # Install Python versions with optimizations
 install_python "3.13.9"
-
-export MAKEFLAGS="-j$(nproc)" 
-python3.13 -m pyperformance compile_all ~/cpython_application_energy_consumption/scripts/experiment/benchmark.conf
+install_python "3.12.11"
+install_python "3.10.18"
 
 echo "Installation complete!"
