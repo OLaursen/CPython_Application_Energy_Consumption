@@ -3,10 +3,11 @@ export PATH=$PATH:/usr/pkg/bin:/usr/pkg/sbin
 install_python(){
         VERSION=$1
         MAJOR_MINOR=$(echo "$VERSION" | cut -d. -f1,2)
-        PYTHON_BIN="/usr/pkg/bin/python$MAJOR_MINOR"
+        PYTHON_BIN="/usr/pkg/bin/python${MAJOR_MINOR}"
         PYTHON_SRC="Python-$VERSION"
         PYTHON_TGZ="$PYTHON_SRC.tgz"
         CPU_COUNT=$(sysctl -n hw.ncpu)
+        BUILDDIR="~/build/python${MAJOR_MINOR}"
 
         # Check if Python version is already installed
         # if [ -x "$PYTHON_BIN" ] && [ "$($PYTHON_BIN --version 2>&1)" = "Python $VERSION" ]; then
@@ -33,7 +34,7 @@ install_python(){
         
         echo "Building Python $VERSION using $CPU_COUNT cores..."
         gmake -j "$CPU_COUNT" profile-opt
-        doas gamke altinstall
+        doas gmake altinstall
         if [ ! -x "$PYTHON_BIN" ]; then
                 echo "Build or installation failed for Python $VERSION"
                 return
@@ -59,7 +60,6 @@ install_python(){
         fi
         echo "Finished installing Python $VERSION"
         date
-
 }
 # Install build dependencies
 doas pkgin -y update
