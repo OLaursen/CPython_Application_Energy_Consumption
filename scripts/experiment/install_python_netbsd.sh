@@ -49,15 +49,11 @@ install_python(){
 
         echo "Verifying installation..."
         "python${MAJOR_MINOR}" --version
-
-        echo "Install pyperformance if not already present"
-        if ! "python${MAJOR_MINOR}" -m pip show pyperformance >/dev/null 2>&1; then
-                echo "Installing pyperformance for $PYTHON_BIN..."
-                "python${MAJOR_MINOR}" -m pip install --upgrade pip
-                "python${MAJOR_MINOR}"  -m pip install pyperformance
-        else
-                echo "pyperformance is already installed for $PYTHON_BIN."
-        fi
+        
+        echo "Installing pyperformance for $PYTHON_BIN..."
+        "python${MAJOR_MINOR}" -m pip install --upgrade pip
+        "python${MAJOR_MINOR}"  -m pip install pyperformance
+        
         echo "Finished installing Python $VERSION"
         date
 }
