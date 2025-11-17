@@ -1,5 +1,6 @@
 #!/bin/sh
-export PATH=$PATH:/usr/pkg/bin:/usr/pkg/sbin
+
+export PATH="/usr/pkg/bin:/usr/pkg/sbin:/usr/local/bin:/usr/bin:/bin"
 install_python(){
         VERSION=$1
         MAJOR_MINOR=$(echo "$VERSION" | cut -d. -f1,2)
@@ -7,8 +8,8 @@ install_python(){
         PYTHON_SRC="Python-$VERSION"
         PYTHON_TGZ="$PYTHON_SRC.tgz"
         CPU_COUNT=$(sysctl -n hw.ncpu)
-        BUILDDIR="~/build/python${MAJOR_MINOR}"
-
+        BUILDDIR="$HOME/build/python${MAJOR_MINOR}"
+        echo "This is the build dir: $BUILDDIR"
         # Check if Python version is already installed
         # if [ -x "$PYTHON_BIN" ] && [ "$($PYTHON_BIN --version 2>&1)" = "Python $VERSION" ]; then
         #     echo "$PYTHON_SRC is already installed."
@@ -29,15 +30,15 @@ install_python(){
         export PKG_CONFIG_PATH="/usr/pkg/lib/pkgconfig"
         export CFLAGS="-std=gnu99 -D_GNU_SOURCE"
         echo "Configuring the build with optimizations..."
-        ./configure --prefix=/usr/local --enable-optimizations --with-openssl=/usr/pkg/
+        ./configure --prefix=/usr/local --enable-optimizations --with-openssl=/usr/pkg/ --with-system-ffi
         
         
         echo "Building Python $VERSION using $CPU_COUNT cores..."
         gmake -j "$CPU_COUNT" profile-opt
-        doas gmake altinstall
+        gmake altinstall
         if [ ! -x "$PYTHON_BIN" ]; then
                 echo "Build or installation failed for Python $VERSION"
-                return
+
         fi
         
         echo "Cleaning up build files..."
@@ -62,7 +63,7 @@ doas pkgin -y update
 doas pkgin -y in gmake git bash wget curl pkgconf libffi \
         readline sqlite3 openssl zlib xz tk bzip2 libuuid \
         gcc clang cmake autoconf automake libtool mpdecimal \
-        zstd tcl sudo # At the time of writing it's 3.13.9
+        zstd tcl sudo
 
 install_python "3.10.18"
 install_python "3.13.9"
