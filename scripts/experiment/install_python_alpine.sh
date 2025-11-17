@@ -19,7 +19,7 @@ install_python() {
         cd Python-$VERSION
 
         # Configure the build with the necessary flags
-        ./configure --prefix=/usr/local --enable-optimizations --with-ensurepip
+        ./configure --prefix=/usr/local --enable-optimizations --with-ensurepip=upgrade
 
         # Build Python with profile-guided optimizations (PGO)
         make -j "$(nproc)" profile-opt
@@ -29,9 +29,6 @@ install_python() {
 
         # Clean up
         rm -rf Python-$VERSION Python-$VERSION.tgz
-
-        # Ensure pip is installed
-        $PYTHON_BIN -m ensurepip
 
         # Verify installation
         $PYTHON_BIN --version
@@ -46,15 +43,10 @@ install_python() {
         echo "pyperformance is already installed for $PYTHON_BIN."
     fi
 }
-#Download Cpython repo for benchmarks
-mkdir -p ~/pybench_results ~/pybench_builds
-cd
-git clone https://github.com/python/cpython.git
-git fetch --tags #Needed inorder to compile python verions via tags
 
 # Install Python versions with optimizations
 install_python "3.13.9"
-export MAKEFLAGS="-j$(sysctl -n hw.ncpu)" 
-python3.13 -m pyperformance compile_all ~/cpython_application_energy_consumption/scripts/experiment/benchmark.conf
+install_python "3.12.11"
+install_python "3.10.18"
 
 echo "Installation complete!"
