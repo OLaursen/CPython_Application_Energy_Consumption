@@ -22,15 +22,16 @@ install_python(){
         echo "Downloading $PYTHON_SRC..."
         ftp https://www.python.org/ftp/python/${VERSION}/${PYTHON_SRC}.tgz
         tar -xzf "$PYTHON_TGZ"
-        cd "$PYTHON_SRC" || exit 1
+        cd "$PYTHON_SRC"
 
         #Ensures openssl can be found:
         export CPPFLAGS="-I/usr/pkg/include"
         export LDFLAGS="-L/usr/pkg/lib -Wl,-R/usr/pkg/lib"
         export PKG_CONFIG_PATH="/usr/pkg/lib/pkgconfig"
         export CFLAGS="-std=gnu99 -D_GNU_SOURCE"
+
         echo "Configuring the build with optimizations..."
-        ./configure --prefix=/usr/local --enable-optimizations --with-openssl=/usr/pkg/ --with-system-ffi
+        ./configure --prefix=/usr/local --enable-optimizations --with-ensurepip=upgrade --with-system-ffi --with-openssl=/usr/pkg/ 
         
         
         echo "Building Python $VERSION using $CPU_COUNT cores..."
@@ -60,12 +61,14 @@ install_python(){
 }
 # Install build dependencies
 doas pkgin -y update
-doas pkgin -y in gmake git bash wget curl pkgconf libffi \
+doas pkgin -y in 
+
+gmake git bash wget curl pkgconf libffi \
         readline sqlite3 openssl zlib xz tk bzip2 libuuid \
         gcc clang cmake autoconf automake libtool mpdecimal \
         zstd tcl sudo
 
-install_python "3.10.18"
-install_python "3.13.9"
+#install_python "3.10.18"
+#install_python "3.13.9"
 install_python "3.12.11"
 echo "Installation complete!"
