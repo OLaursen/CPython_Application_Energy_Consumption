@@ -17,6 +17,7 @@ install_python(){
         # fi
 
         echo "Fetching Python from source"
+        cd
         mkdir -p $BUILDDIR
         cd $BUILDDIR
         echo "Downloading $PYTHON_SRC..."
@@ -31,7 +32,7 @@ install_python(){
         export CFLAGS="-std=gnu99 -D_GNU_SOURCE"
 
         echo "Configuring the build with optimizations..."
-        ./configure --prefix=/usr/local --enable-optimizations --with-ensurepip=upgrade --with-system-ffi --with-openssl=/usr/pkg/ 
+        ./configure --prefix=/usr/local --enable-optimizations --with-ensurepip=upgrade --with-system-ffi --with-openssl=/usr/bin/openssl --with-openssl-rpath=auto
         
         
         echo "Building Python $VERSION using $CPU_COUNT cores..."
@@ -45,9 +46,6 @@ install_python(){
         echo "Cleaning up build files..."
         cd ..
         rm -rf "$PYTHON_SRC" "$PYTHON_TGZ"
-        
-        echo "Ensuring pip is installed..."
-        "python${MAJOR_MINOR}" -m ensurepip
 
         echo "Verifying installation..."
         "python${MAJOR_MINOR}" --version
