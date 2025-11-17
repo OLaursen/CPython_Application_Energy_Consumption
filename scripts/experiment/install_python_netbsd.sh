@@ -31,7 +31,7 @@ install_python(){
         export CFLAGS="-std=gnu99 -D_GNU_SOURCE"
 
         echo "Configuring the build with optimizations..."
-        ./configure --prefix=/usr/local --enable-optimizations --with-ensurepip=upgrade --with-openssl=/usr/bin/openssl --with-openssl-rpath=auto
+        ./configure --prefix=/usr/local --enable-optimizations --with-ensurepip=upgrade --with-openssl=/usr/pkg --with-openssl-rpath=/usr/pkg/lib
         
         
         echo "Building Python $VERSION"
