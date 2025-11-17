@@ -7,7 +7,6 @@ install_python(){
         PYTHON_BIN="/usr/pkg/bin/python${MAJOR_MINOR}"
         PYTHON_SRC="Python-$VERSION"
         PYTHON_TGZ="$PYTHON_SRC.tgz"
-        CPU_COUNT=$(sysctl -n hw.ncpu)
         BUILDDIR="$HOME/build/python${MAJOR_MINOR}"
         echo "This is the build dir: $BUILDDIR"
         # Check if Python version is already installed
@@ -32,11 +31,11 @@ install_python(){
         export CFLAGS="-std=gnu99 -D_GNU_SOURCE"
 
         echo "Configuring the build with optimizations..."
-        ./configure --prefix=/usr/local --enable-optimizations --with-ensurepip=upgrade --with-system-ffi --with-openssl=/usr/bin/openssl --with-openssl-rpath=auto
+        ./configure --prefix=/usr/local --enable-optimizations --with-ensurepip=upgrade --with-openssl=/usr/bin/openssl --with-openssl-rpath=auto
         
         
-        echo "Building Python $VERSION using $CPU_COUNT cores..."
-        gmake -j "$CPU_COUNT" profile-opt
+        echo "Building Python $VERSION"
+        gmake -j profile-opt
         gmake altinstall
         if [ ! -x "$PYTHON_BIN" ]; then
                 echo "Build or installation failed for Python $VERSION"
