@@ -4,6 +4,7 @@
 install_python() {
     VERSION=$1
     PYTHON_BIN="/usr/local/bin/python${VERSION%.*}"
+    BUILD_DIR="$HOME/python-build/python${VERSION%.*}"
 
     # Check if the version is already installed
     if [ -x "$PYTHON_BIN" ] && [[ "$($PYTHON_BIN --version 2>&1)" == *"$VERSION"* ]]; then
@@ -14,6 +15,9 @@ install_python() {
         # Update package list (apk doesn't need update in the same way as apt)
         apk update
 
+        cd 
+        mkdir -p $BUILD_DIR
+        cd $BUILD_DIR
         curl -O https://www.python.org/ftp/python/$VERSION/Python-$VERSION.tgz
         tar -xvzf Python-$VERSION.tgz
         cd Python-$VERSION
