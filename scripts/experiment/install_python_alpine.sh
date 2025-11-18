@@ -26,7 +26,7 @@ install_python() {
         ./configure --prefix=/usr/local --enable-optimizations --with-ensurepip=upgrade
 
         # Build Python with profile-guided optimizations (PGO)
-        make PROFILE_TASK='-m test --pgo -x test_re' -j "$(nproc)" profile-opt
+        make -j "$(nproc)" profile-opt
 
         # Install Python
         make altinstall

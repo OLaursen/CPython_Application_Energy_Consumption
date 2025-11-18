@@ -25,16 +25,13 @@ install_python() {
         tar -xvzf Python-$VERSION.tgz
         cd Python-$VERSION
 
-        ./configure --enable-optimizations
+        ./configure --enable-optimizations --with-ensurepip=upgrade
         make -j "$(nproc)" profile-opt  # Uses PGO
         sudo make altinstall
 
         # Clean up
         cd ..
         rm -rf Python-$VERSION Python-$VERSION.tgz
-
-        # Ensure pip is installed
-        $PYTHON_BIN -m ensurepip
 
         # Verify installation
         $PYTHON_BIN --version

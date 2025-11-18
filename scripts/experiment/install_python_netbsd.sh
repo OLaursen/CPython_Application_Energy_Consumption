@@ -58,9 +58,7 @@ install_python(){
 }
 # Install build dependencies
 doas pkgin -y update
-doas pkgin -y in 
-
-gmake git bash wget curl pkgconf libffi \
+doas pkgin -y in gmake git bash wget curl pkgconf libffi \
         readline sqlite3 openssl zlib xz tk bzip2 libuuid \
         gcc clang cmake autoconf automake libtool mpdecimal \
         zstd tcl sudo
