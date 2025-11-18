@@ -23,23 +23,24 @@ install_python(){
         ftp https://www.python.org/ftp/python/${VERSION}/${PYTHON_SRC}.tgz
         tar -xzf "$PYTHON_TGZ"
         cd "$PYTHON_SRC"
-
+        
         #Ensures openssl can be found:
         export CPPFLAGS="-I/usr/pkg/include"
         export LDFLAGS="-L/usr/pkg/lib -Wl,-R/usr/pkg/lib"
         export PKG_CONFIG_PATH="/usr/pkg/lib/pkgconfig"
         export CFLAGS="-std=gnu99 -D_GNU_SOURCE"
-
+        
+        echo "_ctypes _ctypes/*.c" >> Modules/Setup.local
+        echo "CFLAGS+= -std=gnu99 -D_GNU_SOURCE" >> Modules/Setup.local
+        
         echo "Configuring the build with optimizations..."
         ./configure --prefix=/usr/local --enable-optimizations --with-ensurepip=upgrade --with-openssl=/usr/pkg --with-openssl-rpath=/usr/pkg/lib
-        
-        
+
         echo "Building Python $VERSION"
         gmake -j profile-opt
         gmake altinstall
         if [ ! -x "$PYTHON_BIN" ]; then
                 echo "Build or installation failed for Python $VERSION"
-
         fi
         
         echo "Cleaning up build files..."
