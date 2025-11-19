@@ -25,19 +25,29 @@ install_python(){
         cd "$PYTHON_SRC"
         
         #Ensures openssl can be found:
+      
+        export PKG_CONFIG_PATH="/usr/pkg/lib/pkgconfig"
         export CPPFLAGS="-I/usr/pkg/include"
         export LDFLAGS="-L/usr/pkg/lib -Wl,-R/usr/pkg/lib"
-        export PKG_CONFIG_PATH="/usr/pkg/lib/pkgconfig"
         export CFLAGS="-std=gnu99 -D_GNU_SOURCE"
+
         
-        echo "_ctypes _ctypes/*.c" >> Modules/Setup.local
-        echo "CFLAGS+= -std=gnu99 -D_GNU_SOURCE" >> Modules/Setup.local
+        cat > Modules/Setup.local <<EOF
+# Force working OpenSSL
+_ssl _ssl.c -I/usr/pkg/include -L/usr/pkg/lib -lssl -lcrypto
+_hashlib _hashlib.c -I/usr/pkg/include -L/usr/pkg/lib -lcrypto
+
+# Correct NetBSD ctypes
+_ctypes _ctypes/_ctypes.c -I/usr/pkg/include -L/usr/pkg/lib -lffi
+EOF
         
         echo "Configuring the build with optimizations..."
-        ./configure --prefix=/usr/local --enable-optimizations --with-ensurepip=upgrade --with-openssl=/usr/pkg --with-openssl-rpath=/usr/pkg/lib
+        ./configure --prefix=/usr/local --enable-optimizations --with-ensurepip=upgrade --with-openssl=/usr/pkg --with-openssl-rpath=/usr/pkg/lib CPPFLAGS="-I/usr/pkg/include" LDFLAGS="-L/usr/pkg/lib -Wl,-R/usr/pkg/lib"
+        
+
 
         echo "Building Python $VERSION"
-        gmake -j profile-opt
+        gmake -j$(sysctl -n hw.ncpu) profile-opt
         gmake altinstall
         if [ ! -x "$PYTHON_BIN" ]; then
                 echo "Build or installation failed for Python $VERSION"
