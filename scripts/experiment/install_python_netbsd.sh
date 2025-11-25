@@ -30,27 +30,16 @@ install_python(){
         export CPPFLAGS="-I/usr/pkg/include"
         export LDFLAGS="-L/usr/pkg/lib -Wl,-R/usr/pkg/lib"
         export CFLAGS="-std=gnu99 -D_GNU_SOURCE"
+        # CPPFLAGS="-I/usr/pkg/include" \
+        # LDFLAGS="-L/usr/pkg/lib -Wl,-R/usr/pkg/lib"
 
         
-        if [ "$MAJOR_MINOR" = "3.13" ]; then
-    # Python 3.13+ module layout
-    cat > Modules/Setup.local <<EOF
-_ssl _ssl/_ssl.c -I/usr/pkg/include -L/usr/pkg/lib -lssl -lcrypto
-_hashlib _hashlib/_hashlib.c -I/usr/pkg/include -L/usr/pkg/lib -lcrypto
-_ctypes _ctypes/_ctypes.c -I/usr/pkg/include -L/usr/pkg/lib -lffi
-EOF
-        else
-    # Python 3.12 and older
-    cat > Modules/Setup.local <<EOF
-_ssl _ssl.c -I/usr/pkg/include -L/usr/pkg/lib -lssl -lcrypto
-_hashlib _hashopenssl.c -I/usr/pkg/include -L/usr/pkg/lib -lcrypto
-_ctypes _ctypes/_ctypes.c -I/usr/pkg/include -L/usr/pkg/lib -lffi
-EOF
-        fi
-        
         echo "Configuring the build with optimizations..."
-        ./configure --prefix=/usr/local --enable-optimizations --with-ensurepip=upgrade --with-openssl=/usr/pkg --with-openssl-rpath=/usr/pkg/lib CPPFLAGS="-I/usr/pkg/include" LDFLAGS="-L/usr/pkg/lib -Wl,-R/usr/pkg/lib"
-        
+        ./configure --prefix=/usr/local \
+                --enable-optimizations \
+                --with-ensurepip=upgrade \
+                --with-openssl=/usr/pkg \
+                --with-openssl-rpath=/usr/pkg/lib \
 
 
         echo "Building Python $VERSION"
@@ -82,6 +71,6 @@ doas pkgin -y in gmake git bash wget curl pkgconf libffi \
         zstd tcl sudo
 
 #install_python "3.10.18"
-#install_python "3.13.9"
-install_python "3.12.11"
+install_python "3.13.9"
+#install_python "3.12.11"
 echo "Installation complete!"
