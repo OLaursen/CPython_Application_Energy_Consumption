@@ -178,12 +178,10 @@ if __name__ == '__main__':
             except Exception as error:
                 print(f"Something went wrong: {error}.")
                 time.sleep(10)
-                time.sleep(10)
             print(f"Running python 3.9")
             try:
                 main("RPi4B", "Ubuntu", "3.9.23", credentials["hostname"], credentials["username"], credentials["password"])
                 time.sleep(5)
             except Exception as error:
                 print(f"Something went wrong: {error}.")
-                time.sleep(10)
                 time.sleep(10)
