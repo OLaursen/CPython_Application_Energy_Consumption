@@ -152,28 +152,28 @@ if __name__ == '__main__':
             
             print(f"Running python 3.13")
             try:
-                main("RPi3B+", "Ubuntu", "3.13.7", credentials["hostname"], credentials["username"], credentials["password"])
+                main("RPi4B", "Ubuntu", "3.13.7", credentials["hostname"], credentials["username"], credentials["password"])
                 time.sleep(5)
             except Exception as error:
                 print(f"Something went wrong: {error}.")
                 time.sleep(10)
             print(f"Running python 3.12")
             try:
-                main("RPi3B+", "Ubuntu", "3.12.11", credentials["hostname"], credentials["username"], credentials["password"])
+                main("RPi4B", "Ubuntu", "3.12.11", credentials["hostname"], credentials["username"], credentials["password"])
                 time.sleep(5)
             except Exception as error:
                 print(f"Something went wrong: {error}.")
                 time.sleep(10)
             print(f"Running python 3.11")
             try:
-                main("RPi3B+", "Ubuntu", "3.11.13", credentials["hostname"], credentials["username"], credentials["password"])
+                main("RPi4B", "Ubuntu", "3.11.13", credentials["hostname"], credentials["username"], credentials["password"])
                 time.sleep(5)
             except Exception as error:
                 print(f"Something went wrong: {error}.")
                 time.sleep(10)
             print(f"Running python 3.10")
             try:
-                main("RPi3B+", "Ubuntu", "3.10.18", credentials["hostname"], credentials["username"], credentials["password"])
+                main("RPi4B", "Ubuntu", "3.10.18", credentials["hostname"], credentials["username"], credentials["password"])
                 time.sleep(5)
             except Exception as error:
                 print(f"Something went wrong: {error}.")
@@ -181,7 +181,7 @@ if __name__ == '__main__':
                 time.sleep(10)
             print(f"Running python 3.9")
             try:
-                main("RPi3B+", "Ubuntu", "3.9.23", credentials["hostname"], credentials["username"], credentials["password"])
+                main("RPi4B", "Ubuntu", "3.9.23", credentials["hostname"], credentials["username"], credentials["password"])
                 time.sleep(5)
             except Exception as error:
                 print(f"Something went wrong: {error}.")

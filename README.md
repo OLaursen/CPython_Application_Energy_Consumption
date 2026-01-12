@@ -18,6 +18,10 @@ All the code herein was written with some assistance from ChatGPT.
 - Also have to set password and user if ssh'ing
 
 FreeBSD is not supported on pi5, so only pi4 images are created for FreeBSD.
+#### On controller pc ensure that:
+otii-tcp-client and paramiko is installed. 
+
+
 
 #### Needed to add swapfile inorder to complete install_python script on ubuntu with pi3b+:
 
@@ -63,3 +67,10 @@ doas dd if=/dev/zero of=/swapfile bs=1m count=2048
 doas chmod 600 /swapfile
 doas swapctl -a /swapfile
 ```
+
+
+#### Setup ubuntu
+sudo apt update
+sudo apt install git net-tools
+sudo systemctl enable --now ssh
+git clone https://
