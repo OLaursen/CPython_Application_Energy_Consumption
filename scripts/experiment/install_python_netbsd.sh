@@ -70,7 +70,67 @@ doas pkgin -y in gmake git bash wget curl pkgconf libffi \
         gcc clang cmake autoconf automake libtool mpdecimal \
         zstd tcl sudo
 
-#install_python "3.10.18"
-install_python "3.13.9"
-#install_python "3.12.11"
-echo "Installation complete!"
+# Install pyenv
+
+
+# Set pyenv in path
+
+echo '
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init --path)"
+eval "$(pyenv init -)"
+' >> ~/.profile
+. ~/.profile
+
+pyenv --version
+# Install Python versions via pyenv
+
+VERSIONS="
+3.13.7
+3.12.11
+3.11.13
+3.10.18
+3.9.23
+"
+
+for VERSION in $VERSIONS; do
+    echo "Installing Python $VERSION"
+    pyenv install -s "$VERSION" || exit 1
+    PYTHON_BIN="$HOME/.pyenv/versions/$VERSION/bin/python"
+    CONFIGURE_OPTS="--with-openssl=/etc/openssl"
+    "$PYTHON_BIN" -m ensurepip
+    "$PYTHON_BIN" -m pip install -U pip setuptools wheel
+    "$PYTHON_BIN" -m pip install pyperformance
+done
+
+# Find project directory or clone it
+if [[ -d "$HOME/CPython_Application_Energy_Consumption" ]]; then
+    echo "Project directory found. Checking for updates."
+    cd "$HOME/CPython_Application_Energy_Consumption"
+    git fetch -a
+    git pull
+else
+  echo "Project directory not found, cloning repository into HOME directory."
+  cd 
+  git clone "https://github.com/olaursen/CPython_Application_Energy_Consumption.git"
+fi
+
+echo "Python installation and setup complete!"
+
+CPPFLAGS="-I/etc/openssl/include" \
+LDFLAGS="-L/etc/openssl/lib" \
+pyenv install -v -s "3.13.7"
+
+# Applying a patch to pyenv
+#Assuming that patches are in "~/patchesXXX"
+cd 
+cd patches313
+patches=""
+
+for file in *.patch; do
+    echo "Applying patch $file"
+    patches="$patches$file "
+done
+
+echo "All patches to apply: $patches"
