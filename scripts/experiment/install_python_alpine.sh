@@ -12,8 +12,7 @@ git clone https://github.com/pyenv/pyenv.git ~/.pyenv
 curl https://pyenv.run | bash
 
 cat >> ~/.bashrc <<'EOF'
-export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$PYENV_ROOT/bin:$PATH"
+export PATH="$HOME/.pyenv/bin:$PATH"
 eval "$(pyenv init -)"
 EOF
 source ~/.bashrc
@@ -21,8 +20,8 @@ source ~/.bashrc
 # Install python versions
 VERSIONS=("3.13.7" "3.12.11" "3.11.13" "3.10.18" "3.9.23")
 for VERSION in "${VERSIONS[@]}"; do
-    PYTHON_BIN="~/.pyenv/versions/$VERSION/bin/python"
-    $PYTHON_BIN install $VERSION
+    PYTHON_BIN="$HOME/.pyenv/versions/$VERSION/bin/python"
+    pyenv install $VERSION
     $PYTHON_BIN -m pip install pyperformance
 
 done
