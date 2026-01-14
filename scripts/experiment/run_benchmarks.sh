@@ -5,7 +5,7 @@
 run_benchmarks() {
     PYENV=$1
     PYTHON_BIN="$HOME/.pyenv/versions/$PYENV/bin/python"
-    $PYTHON_BIN -m pyperformance run --benchmark=2to3,chamelon,docutils,html5lib,tornado_http,async_generators,async_tree_none,async_tree_cpu_io_mixed,async_tree_memoization,float,nbody,pidigits,regex_compile,regex_dna,json_dumps,json_loads,pickle_list,pickle_dict,python_startup,python_startup_no_site,genshi_txt,mako -o $PYENV.json
+    $PYTHON_BIN -m pyperformance run --benchmark=2to3,chamelon,docutils,html5lib,tornado_http,async_generators,float,nbody,pidigits,regex_compile,json_dumps,json_loads,pickle_list,python_startup -o $PYENV.json
 }
 
 # Script finds path to desired Python version
