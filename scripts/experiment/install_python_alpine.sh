@@ -1,56 +1,42 @@
 #!/bin/bash
 
-# Function to install a specific Python version with optimizations on Alpine Linux
-install_python() {
-    VERSION=$1
-    PYTHON_BIN="/usr/local/bin/python${VERSION%.*}"
-    BUILD_DIR="$HOME/python-build/python${VERSION%.*}"
+# Install dependencies
+apk update
+apk add --no-cache bash git curl ca-certificates build-base \
+    linux-headers openssl-dev bzip2-dev zlib-dev xz-dev libffi-dev \
+    readline-dev sqlite-dev ncurses-dev libssl3 musl expat-dev \
+    gdbm-dev mpdecimal-dev 
 
-    # Check if the version is already installed
-    if [ -x "$PYTHON_BIN" ] && [[ "$($PYTHON_BIN --version 2>&1)" == *"$VERSION"* ]]; then
-        echo "Python $VERSION is already installed."
-    else
-        echo "Installing Python $VERSION with optimizations..."
+# Install pyenv
+git clone https://github.com/pyenv/pyenv.git ~/.pyenv
+curl https://pyenv.run | bash
 
-        # Update package list (apk doesn't need update in the same way as apt)
-        apk update
+cat >> ~/.bashrc <<'EOF'
+export PATH="$HOME/.pyenv/bin:$PATH"
+eval "$(pyenv init -)"
+EOF
+source ~/.bashrc
 
-        cd 
-        mkdir -p $BUILD_DIR
-        cd $BUILD_DIR
-        curl -O https://www.python.org/ftp/python/$VERSION/Python-$VERSION.tgz
-        tar -xvzf Python-$VERSION.tgz
-        cd Python-$VERSION
+# Install python versions
+VERSIONS=("3.13.7" "3.12.11" "3.11.13" "3.10.18" "3.9.23")
+for VERSION in "${VERSIONS[@]}"; do
+    PYTHON_BIN="$HOME/.pyenv/versions/$VERSION/bin/python"
+    pyenv install $VERSION
+    $PYTHON_BIN -m pip install pyperformance
 
-        # Configure the build with the necessary flags
-        ./configure --prefix=/usr/local --enable-optimizations --with-ensurepip=upgrade
+done
 
-        # Build Python with profile-guided optimizations (PGO)
-        make -j "$(nproc)" profile-opt
+# Find project directory or clone it
+if [[ -d "$HOME/CPython_Application_Energy_Consumption" ]]; then
+    echo "Project directory found. Checking for updates."
+    cd "$HOME/CPython_Application_Energy_Consumption"
+    git fetch -a
+    git pull
+else
+  echo "Project directory not found, cloning repository into HOME directory."
+  cd 
+  git clone "https://github.com/olaursen/CPython_Application_Energy_Consumption.git"
+fi
 
-        # Install Python
-        make altinstall
+echo "Python installation and setup complete!"
 
-        # Clean up
-        rm -rf Python-$VERSION Python-$VERSION.tgz
-
-        # Verify installation
-        $PYTHON_BIN --version
-    fi
-
-    # Install pyperformance if not already installed
-    if ! $PYTHON_BIN -m pip show pyperformance &>/dev/null; then
-        echo "Installing pyperformance for $PYTHON_BIN..."
-        $PYTHON_BIN -m pip install --upgrade pip
-        $PYTHON_BIN -m pip install pyperformance
-    else
-        echo "pyperformance is already installed for $PYTHON_BIN."
-    fi
-}
-
-# Install Python versions with optimizations
-install_python "3.13.9"
-install_python "3.12.11"
-install_python "3.10.18"
-
-echo "Installation complete!"
