@@ -1,6 +1,6 @@
 #!/bin/bash
 
-os_urls=("https://dl-cdn.alpinelinux.org/alpine/v3.23/releases/aarch64/alpine-rpi-3.23.2-aarch64.tar.gz" "https://download.freebsd.org/releases/arm64/aarch64/ISO-IMAGES/14.3/FreeBSD-14.3-RELEASE-arm64-aarch64-RPI.img.xz" "https://github.com/manjaro-arm/generic-images/releases/download/23.02/Manjaro-ARM-minimal-generic-23.02.img.xz" "https://nycdn.netbsd.org/pub/NetBSD-daily/netbsd-10/latest/evbarm-aarch64/binary/gzimg/arm64.img.gz" "https://cdn.openbsd.org/pub/OpenBSD/7.7/arm64/install77.img" "https://cdimage.ubuntu.com/releases/22.04/release/ubuntu-22.04.5-preinstalled-server-arm64+raspi.img.xz")
+os_urls=("https://dl-cdn.alpinelinux.org/alpine/v3.23/releases/aarch64/alpine-rpi-3.23.2-aarch64.tar.gz" "https://download.freebsd.org/releases/arm64/aarch64/ISO-IMAGES/14.3/FreeBSD-14.3-RELEASE-arm64-aarch64-RPI.img.xz" "https://github.com/manjaro-arm/generic-images/releases/download/23.02/Manjaro-ARM-minimal-generic-23.02.img.xz" "https://nycdn.netbsd.org/pub/NetBSD-daily/netbsd-10/latest/evbarm-aarch64/binary/gzimg/arm64.img.gz" "https://cdimage.ubuntu.com/releases/22.04/release/ubuntu-22.04.5-preinstalled-server-arm64+raspi.img.xz")
 
 get_url(){
     os="$1"
@@ -9,7 +9,6 @@ get_url(){
         "freebsd") echo "${os_urls[1]}" ;;
         "manjaro") echo "${os_urls[2]}" ;;
         "netbsd") echo "${os_urls[3]}" ;;
-        "openbsd") echo "${os_urls[4]}" ;;
         "ubuntu") echo "${os_urls[5]}" ;;
         *) echo "Unknown OS: $os" ; exit 1 ;;
     esac
