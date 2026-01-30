@@ -4,15 +4,76 @@ import time
 import csv
 import os
 import json
+import pandas
 from otii_tcp_client import otii_client
 
 
 class AppException(Exception):
     '''Application Exception'''
 
-def run_benchmarks(rpi, linux, pyenv, hostname, username, password):
+def write_record_to_csv(distro, row):
+    headers = ["RPi", "Distro", "Version", "From", "To", "Offset", "Sample rate", "Min", "Max","Average","Mean",
+               "1st quantile", "3rd quantile", "Duration", "Total Energy consumption", "Standard Deviation"]
+    file_path = f"../../results/results_{distro}.csv"
+    file_exists = os.path.isfile(file_path)        
+    with open(file_path, mode="a", newline="") as file:
+        writer = csv.writer(file)
+        if not file_exists:
+            writer.writerow(headers)
+        writer.writerow(row)
+
+
+def extract_data_from_recording(project, device, rpi, distro, python_version):
+    # Setup recording and data extraction
+    recording = project.get_last_recording()
+    recording.rename(f"recording_{rpi}_{distro}_{python_version}")
+
+    info = recording.get_channel_info(device.id, 'mp')
+    statistics_mp = recording.get_channel_statistics(device.id, 'mp', info['from'], info['to'])
+    data_count = recording.get_channel_data_count(device.id, 'mp')
+    data = recording.get_channel_data(device.id, 'mp', 0, data_count)['values']
+    df = pandas.DataFrame(data, columns=['watt'])
+    
+    # Key statistics from recording
+    duration = info["to"] - info["from"]
+    max_watt = statistics_mp["max"]
+    min_watt = statistics_mp["min"]
+    average_watt = statistics_mp["average"]
+    total_energy_joules = duration * average_watt
+        
+    # Derived statistics
+    std = df['watt'].std()
+    mean = df['watt'].mean()
+    q1 = df['watt'].quantile(0.25)
+    q3 = df['watt'].quantile(0.75)
+
+    # Create data record
+
+    row = [
+            rpi, 
+            distro,
+            python_version,
+            info["from"],
+            info["to"],
+            info["offset"],
+            info["sample_rate"],
+            round(min_watt, 3),
+            round(max_watt, 3),
+            round(mean, 3),
+            round(q1, 3),
+            round(q3, 3),
+            round(average_watt, 3),
+            round(duration, 3),
+            round(total_energy_joules, 3),
+            round(std, 3)
+        ]
+    
+    return row    
+                                                        
+
+def run_benchmarks(rpi, distro, python_version, hostname, username, password):
     # Define command to run script
-    command = f"bash ~/cpython_application_energy_consumption/scripts/experiment/run_benchmarks.sh {pyenv}" 
+    command = f"bash ~/cpython_application_energy_consumption/scripts/experiment/run_benchmarks.sh {python_version}" 
 
     try:
         # Create an SSH client
@@ -45,8 +106,8 @@ def run_benchmarks(rpi, linux, pyenv, hostname, username, password):
             print(line)
 
         # Execute the command
-        print(f"Running command: rm {pyenv}.json")
-        stdin, stdout, stderr = ssh_client.exec_command(f"rm {pyenv}.json")
+        print(f"Running command: rm {python_version}.json")
+        stdin, stdout, stderr = ssh_client.exec_command(f"rm {python_version}.json")
 
         # Wait for the command to complete and fetch outputs
         exit_status = stdout.channel.recv_exit_status()
@@ -71,61 +132,19 @@ def run_benchmarks(rpi, linux, pyenv, hostname, username, password):
 
     # Get statistics for the recording
     time.sleep(10)
-    recording = project.get_last_recording()
-    info = recording.get_channel_info(device.id, 'mp')
-    statistics_mp = recording.get_channel_statistics(device.id, 'mp', info['from'], info['to'])
+    
+    row = extract_data_from_recording(project, device, rpi, distro, python_version)
+
+    write_record_to_csv(distro, row)
 
 
-    recording.rename(f"recording_{rpi}_{linux}_{pyenv}")
-
-    # # Assume info and statistics_mp are already defined
-    duration = info["to"] - info["from"]
-    energy_joules = statistics_mp["average"] * duration
-
-    # # Column headers (must match order of data)
-    headers = [
-        "From", "To", "Offset", "Sample rate",
-        "Min", "Max", "Average", "Duration", "Energy consumption"
-    ]
-
-    # # Row of data to append
-    row = [
-        info["from"],
-        info["to"],
-        info["offset"],
-        info["sample_rate"],
-        round(statistics_mp["min"], 5),
-        round(statistics_mp["max"], 5),
-        round(statistics_mp["average"], 5),
-        round(duration, 5),
-        round(energy_joules, 5)
-    ]
-
-    file_path = f"../../results/results_{rpi}_{linux}_{pyenv}.csv"
-
-    # # Check if file exists
-    file_exists = os.path.isfile(file_path)
-
-    # Open the file in append mode
-    with open(file_path, mode="a", newline="") as file:
-        writer = csv.writer(file)
-        
-        # Write header if file is new
-        if not file_exists:
-            writer.writerow(headers)
-        
-        # Write the data row
-        writer.writerow(row)
-
-
-
-def main(rpi, linux, version, hostname, username, password):
+def main(rpi, distro, version, hostname, username, password):
     '''Connect to the Otii 3 application and run the measurement'''
     try:
-        run_benchmarks( rpi, linux, version, hostname, username, password)
+        run_benchmarks( rpi, distro, version, hostname, username, password)
     except Exception as error:
         print(f"Something went wrong: {error}. Retrying")
-        run_benchmarks(rpi, linux, version, hostname, username, password)
+        run_benchmarks(rpi, distro, version, hostname, username, password)
 
 if __name__ == '__main__':
     client = otii_client.OtiiClient()
@@ -141,8 +160,7 @@ if __name__ == '__main__':
         #Deprecated device.set_exp_voltage(4.9)
         device.set_max_current(3.0)
 
-        # Enable the main current and power channel
-        device.enable_channel('mc', True)
+        # Enable the main power channel
         device.enable_channel('mp', True)
 
         # Get the active project
