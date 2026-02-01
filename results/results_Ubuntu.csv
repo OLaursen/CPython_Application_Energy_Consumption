@@ -1,4 +1,4 @@
-RPi,Distro,Version,From,To,Offset,Sample rate,Min,Max,Average,Mean,1st quantile,3rd quantile,Duration,Energy consumption,Standard Deviation
+RPi,Distro,Version,From,To,Offset,Sample rate,Min,Max,Average,Mean,1st quantile,3rd quantile,Duration,Total Energy Consumption,Standard Deviation
 RPi4B,Ubuntu,3.13.7,0,5128.608,0,50000,1.692,4.35,2.052,2.001,2.048,2.052,5128.608,10522.823,0.146
 RPi4B,Ubuntu,3.12.11,0,5343.065,0,50000,1.701,4.127,2.048,2.0,2.041,2.048,5343.065,10943.585,0.144
 RPi4B,Ubuntu,3.11.13,0,4948.137,0,50000,1.701,4.407,2.057,2.007,2.052,2.057,4948.137,10176.896,0.145

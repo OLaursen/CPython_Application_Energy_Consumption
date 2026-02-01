@@ -1,4 +1,4 @@
-RPi,Distro,Version,From,To,Offset,Sample rate,Min,Max,Average,Mean,1st quantile,3rd quantile,Duration,Total Energy consumption,Standard Deviation
+RPi,Distro,Version,From,To,Offset,Sample rate,Min,Max,Average,Mean,1st quantile,3rd quantile,Duration,Total Energy Consumption,Standard Deviation
 RPi3B+,FreeBSD,3.13.7,0,9771.687,0,10000,2.678,4.636,3.131,3.068,3.198,3.131,9771.687,30591.093,0.089
 RPi3B+,FreeBSD,3.12.11,0,9958.743,0,10000,2.686,4.677,3.132,3.07,3.199,3.132,9958.743,31191.006,0.088
 RPi3B+,FreeBSD,3.11.13,0,9215.184,0,10000,2.685,4.691,3.137,3.075,3.204,3.137,9215.184,28907.392,0.089

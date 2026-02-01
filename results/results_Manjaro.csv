@@ -1,4 +1,4 @@
-RPi,Distro,Version,From,To,Offset,Sample rate,Min,Max,Average,Mean,1st quantile,3rd quantile,Duration,Total Energy consumption,Standard Deviation
+RPi,Distro,Version,From,To,Offset,Sample rate,Min,Max,Average,Mean,1st quantile,3rd quantile,Duration,Total Energy Consumption,Standard Deviation
 RPi3B+,Manjaro,3.13.7,0,9498.188,0,10000,2.377,4.482,2.781,2.753,2.779,2.781,9498.188,26412.087,0.072
 RPi3B+,Manjaro,3.12.11,0,9737.827,0,10000,2.375,4.789,2.779,2.752,2.778,2.779,9737.827,27062.361,0.072
 RPi3B+,Manjaro,3.11.13,0,9248.391,0,10000,2.375,4.821,2.782,2.755,2.781,2.782,9248.391,25730.755,0.072
