@@ -1,33 +1,13 @@
-#!/usr/bin/env Version3
-
-import glob
-from typing import List
-import pandas as pd
+#!/usr/bin/env python3
 import matplotlib.pyplot as plt
 
-def parse_filename():
-    files = glob.glob("../../results/results_*.csv")
-    return files if files else None
 
 class boxplot_generator:
     
-    def __init__(self, path_pattern, groups_and_labels): # Could add a data loader as a parameter that exposes (load_data/discover_result_files)
-        self.path_pattern = path_pattern
+    def __init__(self, dataframe, groups_and_labels):
         self.group_to_label = groups_and_labels
         self.groups = list(groups_and_labels.keys())
-        self.create_dataframe()
-
-    def discover_result_files(self):
-        files = glob.glob(self.path_pattern)
-        if not files:
-            print("No benchmark CSV files found. Cannot generate boxplots.")
-            return
-        return files
-
-    def create_dataframe(self):
-        files = self.discover_result_files()
-        result_data = [pd.read_csv(f) for f in files]
-        self.dataframe = pd.concat(result_data, ignore_index=False)
+        self.dataframe = dataframe
 
     def plot_boxplot(self, group):
         group_values = self.dataframe[group].unique()
@@ -48,6 +28,7 @@ class boxplot_generator:
             mean_val = group_df['Total Energy Consumption'].mean()
             x_pos = i + 1
             ax.text(x_pos, mean_val, f'{mean_val:.2f}', horizontalalignment='center', verticalalignment='bottom', color='blue')
+        
         # Zoom y-axis
         all_vals = self.dataframe['Total Energy Consumption'].values
         y_min, y_max = all_vals.min(), all_vals.max()
@@ -64,6 +45,6 @@ class boxplot_generator:
         plt.savefig(output_path, dpi=150)
         plt.close(fig)
 
-    def generate_boxplot_files_for_each_group(self):
+    def generate_boxplot_figures_for_each_group(self):
             for group in self.groups:
                 self.plot_boxplot(group)
