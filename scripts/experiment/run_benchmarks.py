@@ -4,7 +4,7 @@ import time
 import csv
 import os
 import json
-import pandas
+import pandas as pd 
 from otii_tcp_client import otii_client
 
 
@@ -32,7 +32,7 @@ def extract_data_from_recording(project, device, rpi, distro, python_version):
     statistics_mp = recording.get_channel_statistics(device.id, 'mp', info['from'], info['to'])
     data_count = recording.get_channel_data_count(device.id, 'mp')
     data = recording.get_channel_data(device.id, 'mp', 0, data_count)['values']
-    df = pandas.DataFrame(data, columns=['watt'])
+    df = pd.DataFrame(data, columns=['watt'])
     
     # Key statistics from recording
     duration = info["to"] - info["from"]
