@@ -25,34 +25,22 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Patch
 
 
-def parse_filename(fname):
-    m = re.match(r"../../results/results_(.+?)_(.+?)_python(\d+\.\d+)\.csv$", fname)
-    return m.groups() if m else None
-
-
-def compute_avg_consumption(path):
-    df = pd.read_csv(path)
-    return df.iloc[:, -1].mean()  # Last column is energy consumption
-
-
 def main():
-    files = glob.glob("../../results/results_*_python*.csv")
-    records = []
-    for path in files:
-        parsed = parse_filename(path)
-        if not parsed:
-            continue
-        pi, distro, pyver = parsed
-        val = compute_avg_consumption(path)
-        records.append({'pi': pi, 'distro': distro, 'python': pyver, 'value': val})
-    df = pd.DataFrame(records)
+    files = glob.glob("../../results/results_*.csv")
+    if not files:
+        print("No benchmark CSV files found.")
+        return
+    
+    files = [pd.read_csv(f) for f in files]
+    df = pd.concat(files, ignore_index=False)
 
-    pis = sorted(df['pi'].unique())
-    pythons = sorted(df['python'].unique(), key=lambda v: float(v))
+    pis = sorted(df['RPi'].unique())
+    pythons = sorted(df['Version'].unique(), key=lambda x: list(map(int, x.split('.'))))
+    distros = sorted(df['Distro'].unique())
+
     if '3.9' in pythons:
         pythons.remove('3.9')
         pythons = ['3.9'] + pythons
-    distros = ['Ubuntu', 'Alpine', 'Manjaro', 'FreeBSD']
 
     colors = {
         'Alpine': '#4169E1',
@@ -66,22 +54,21 @@ def main():
     x_groups = []
     current = 0
     gap = 1.0
-    width = 0.8
+    width = 0.4
 
     for pi in pis:
         for pv in pythons:
             distro_vals = []
             for d in distros:
-                subset = df[(df['pi'] == pi) & (df['python'] == pv) & (df['distro'] == d)]
+                subset = df[(df['RPi'] == pi) & (df['Version'] == pv) & (df['Distro'] == d)]
                 if not subset.empty:
-                    distro_vals.append((d, subset['value'].iloc[0]))
-            sorted_distros = [d for d, _ in sorted(distro_vals, key=lambda x: x[1], reverse=True)]
-            for d in sorted_distros:
+                    distro_vals.append((d, subset["Total Energy Consumption"].iloc[0]))
+            for d in distros:
                 x_positions.append(current)
                 values.append(next(v for dd, v in distro_vals if dd == d))
                 x_groups.append((pi, pv))
                 current += 1
-            current += 0.2
+            current += 0.3
         current += gap
 
     group_centers = {}
@@ -108,7 +95,7 @@ def main():
 
     for idx, xpos in enumerate(x_positions):
         pi, pv = x_groups[idx]
-        d = df[(df['pi'] == pi) & (df['python'] == pv) & (df['value'] == values[idx])]['distro'].iloc[0]
+        d = df[(df['RPi'] == pi) & (df['Version'] == pv) & (df['Total Energy Consumption'] == values[idx])]['Distro'].iloc[0]
         ax.bar(xpos, values[idx], width=width, color=colors[d], edgecolor='black')
         ax.annotate(f"{values[idx]:.2f}",
                     xy=(xpos + width / 2, values[idx]),
@@ -143,14 +130,14 @@ def main():
     for xctr, pi in pi_centers:
         ax.text(xctr, ylim[1] * 1.02, pi, ha='center', va='bottom', fontsize='medium')
 
-    ax.set_ylabel('Average Energy Consumption (J)')
+    ax.set_ylabel('Total Energy Consumption (J)')
     ax.set_title("")
 
     handles = [Patch(facecolor=colors[d], label=d) for d in distros]
     ax.legend(handles=handles, title='OS', loc='upper center', bbox_to_anchor=(0.5, -0.2), ncol=4)
 
     plt.tight_layout()
-    outfn = "./figures/consumption_barplot_all_pis.png"
+    outfn = "./figures/consumption__test-barplot_all_pis.png"
     fig.savefig(outfn, dpi=150)
     print(f"Saved combined bar plot to {outfn}")
 
