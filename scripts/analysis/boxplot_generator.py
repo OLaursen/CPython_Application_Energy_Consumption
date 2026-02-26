@@ -2,18 +2,19 @@
 import matplotlib.pyplot as plt
 
 
-class boxplot_generator:
+class generator:
     
-    def __init__(self, dataframe, groups_and_labels):
-        self.group_to_label = groups_and_labels
-        self.groups = list(groups_and_labels.keys())
+    def __init__(self, dataframe, outfile):
+        self.group_to_label = {'Distro': 'Operating System','Version': 'Python Version','RPi': 'Raspberry Pi Model'}
+        self.groups = list(self.groups_and_labels.keys())
         self.dataframe = dataframe
+        self.outfile = outfile
 
     def plot_boxplot(self, group):
         group_values = self.dataframe[group].unique()
         grouped_data = self.dataframe.groupby(by=group)
 
-        fig, ax = plt.subplots(figsize=(10, 6))
+        fig, ax = plt.subplots(figsize=(16, 9))
 
         boxplot = ax.boxplot([grouped_data.get_group(val)['Total Energy Consumption'].values for val in group_values], 
                              labels=group_values, patch_artist=True, showfliers=False)

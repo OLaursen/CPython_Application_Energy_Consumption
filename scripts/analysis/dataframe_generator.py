@@ -1,7 +1,7 @@
 import glob
 import pandas as pd
 
-class dataframe_generator:
+class generator:
     def __init__(self, csv_path_pattern):
         self.csv_path_pattern = csv_path_pattern
         self.create_dataframe()
