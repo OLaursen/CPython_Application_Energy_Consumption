@@ -147,59 +147,33 @@ def main(rpi, distro, version, hostname, username, password):
         run_benchmarks(rpi, distro, version, hostname, username, password)
 
 if __name__ == '__main__':
+    testrpi = "RPi4B"
+    testos = "Ubuntu"
     client = otii_client.OtiiClient()
     with client.connect() as otii:
-        #Get a reference to a Arc or Ace device
+        #Detect Device
         devices = otii.get_devices()
         if len(devices) == 0:
-            raise AppException('No Arc or Ace connected!')
+            raise AppException('No Ace connected!')
         device = devices[0]
 
         #Configure the device
         device.set_main_voltage(5.15)
-        #Deprecated device.set_exp_voltage(4.9)
         device.set_max_current(3.0)
 
         # Enable the main power channel
         device.enable_channel('mp', True)
 
         # Get the active project
+        versions = ["3.13.7", "3.12.11", "3.11.13", "3.10.18", "3.9.23"]
         project = otii.get_active_project()
         with open("pi_credentials.json") as f:
             credentials = json.load(f)
-            
-            print(f"Running python 3.13")
-            try:
-                main("RPi4B", "Ubuntu", "3.13.7", credentials["hostname"], credentials["username"], credentials["password"])
-                time.sleep(5)
-            except Exception as error:
-                print(f"Something went wrong: {error}.")
-                time.sleep(10)
-            print(f"Running python 3.12")
-            try:
-                main("RPi4B", "Ubuntu", "3.12.11", credentials["hostname"], credentials["username"], credentials["password"])
-                time.sleep(5)
-            except Exception as error:
-                print(f"Something went wrong: {error}.")
-                time.sleep(10)
-            print(f"Running python 3.11")
-            try:
-                main("RPi4B", "Ubuntu", "3.11.13", credentials["hostname"], credentials["username"], credentials["password"])
-                time.sleep(5)
-            except Exception as error:
-                print(f"Something went wrong: {error}.")
-                time.sleep(10)
-            print(f"Running python 3.10")
-            try:
-                main("RPi4B", "Ubuntu", "3.10.18", credentials["hostname"], credentials["username"], credentials["password"])
-                time.sleep(5)
-            except Exception as error:
-                print(f"Something went wrong: {error}.")
-                time.sleep(10)
-            print(f"Running python 3.9")
-            try:
-                main("RPi4B", "Ubuntu", "3.9.23", credentials["hostname"], credentials["username"], credentials["password"])
-                time.sleep(5)
-            except Exception as error:
-                print(f"Something went wrong: {error}.")
-                time.sleep(10)
+            for version in versions:
+                print(f"Running python {version}")
+                try:
+                    main(testrpi, testos, version, credentials["hostname"], credentials["username"], credentials["password"])
+                    time.sleep(5)
+                except Exception as error:
+                    print(f"Something went wrong: {error}.")
+                    time.sleep(10)
