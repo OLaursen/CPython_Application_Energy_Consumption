@@ -19,8 +19,6 @@ eval "$(pyenv init -)"
 
 . ~/.bashrc
 
-
-pyenv --version
 # Install Python versions via pyenv
 
 VERSIONS="
@@ -52,23 +50,11 @@ export LDFLAGS="-L/usr/pkg/lib -Wl,-R/usr/pkg/lib"
 export PKG_CONFIG_PATH="/usr/pkg/lib/pkgconfig"
 export CFLAGS="${CFLAGS:+$CFLAGS }-std=gnu11"
 
-# Assumes that patch folder from pkgsrc repositiory are extracted to home directory named patches<major-version><minor-version>
+# Assumes that patch folder from pkgsrc repositiory is extracted to home directory named patches<major-version><minor-version>
 cat patches313/* | pyenv install -v --patch 3.13.7
 cat patches312/* | pyenv install -v --patch 3.12.11
 cat patches311/* | pyenv install -v --patch 3.11.13
 cat patches310/* | pyenv install -v --patch 3.10.18
 cat patches39/* | pyenv install -v --patch 3.9.23
-
-# Find project directory or clone it
-if [[ -d "$HOME/CPython_Application_Energy_Consumption" ]]; then
-    echo "Project directory found. Checking for updates."
-    cd "$HOME/CPython_Application_Energy_Consumption"
-    git fetch -a
-    git pull
-else
-  echo "Project directory not found, cloning repository into HOME directory."
-  cd 
-  git clone "https://github.com/olaursen/CPython_Application_Energy_Consumption.git"
-fi
 
 echo "Python installation and setup complete!"

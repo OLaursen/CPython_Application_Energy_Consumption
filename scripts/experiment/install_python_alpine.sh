@@ -26,17 +26,5 @@ for VERSION in "${VERSIONS[@]}"; do
 
 done
 
-# Find project directory or clone it
-if [[ -d "$HOME/CPython_Application_Energy_Consumption" ]]; then
-    echo "Project directory found. Checking for updates."
-    cd "$HOME/CPython_Application_Energy_Consumption"
-    git fetch -a
-    git pull
-else
-  echo "Project directory not found, cloning repository into HOME directory."
-  cd 
-  git clone "https://github.com/olaursen/CPython_Application_Energy_Consumption.git"
-fi
-
 echo "Python installation and setup complete!"
 
