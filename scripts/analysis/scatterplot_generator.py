@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.lines as line
 from matplotlib.markers import MarkerStyle
@@ -55,9 +54,9 @@ class generator:
                     s=size,
                 )
         
-        ax.set_title(f'{title_and_unit} and Runtime(s) per combination of OS, Python version and Pi Model')
-        ax.set_xlabel('Duration (s)')
-        ax.set_ylabel(f'{mode} [{unit}]')
+        #ax.set_title(f'{title_and_unit} and Runtime(s) per combination of OS, Python version and Pi Model')
+        ax.set_xlabel('Duration (s)', size='large')
+        ax.set_ylabel(f'Power draw [{unit}]', size='large')
         ax.grid()
         # Legend
         ## Markers
@@ -73,7 +72,7 @@ class generator:
         ax.legend(
             handles=legend_items,
             loc='lower right',
-            fontsize=9,
+            fontsize=12,
             frameon=True,
             labelspacing=0.6,
             handlelength=1.5

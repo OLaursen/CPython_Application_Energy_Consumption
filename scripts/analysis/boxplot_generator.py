@@ -12,7 +12,7 @@ class generator:
         group_values = self.dataframe[group].unique()
         grouped_data = self.dataframe.groupby(by=group)
 
-        fig, ax = plt.subplots(figsize=(16, 9))
+        fig, ax = plt.subplots(figsize=(12, 7))
 
         boxplot = ax.boxplot([grouped_data.get_group(val)['Total Energy Consumption'].values for val in group_values], 
                                 labels=group_values,
@@ -29,13 +29,13 @@ class generator:
             group_df = grouped_data.get_group(val)
             mean_val = group_df['Total Energy Consumption'].mean()
             x_pos = i + 1
-            ax.text(x_pos, mean_val, f'μ={mean_val:.2f}', horizontalalignment='center', verticalalignment='bottom', color='blue')
+            ax.text(x_pos, mean_val, f'μ={mean_val:.2f}', horizontalalignment='center', verticalalignment='bottom', color='blue', fontsize='medium')
         
         
         ax.grid(True, axis='y', linestyle=':', linewidth=2, alpha=0.6)
-        ax.set_title(f'Total Energy Consumption Boxplot grouped by {self.groups_to_labels[group]}')
-        ax.set_ylabel('Energy Consumption [J]')
-        ax.set_xlabel(self.groups_to_labels[group])
+        #ax.set_title(f'Total Energy Consumption Boxplot grouped by {self.groups_to_labels[group]}', size='large')
+        ax.set_ylabel('Energy Consumption [J]', size='large')
+        ax.set_xlabel(self.groups_to_labels[group], size='large')
         plt.tight_layout()
 
         output_path = f'./figures/energy-consumption-boxplot_by_{group}.png'

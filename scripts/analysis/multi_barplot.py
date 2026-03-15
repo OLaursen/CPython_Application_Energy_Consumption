@@ -19,10 +19,10 @@ class generator:
             pythons = ['3.9'] + pythons
 
         colors = {
-            'Alpine': '#4169E1',
-            'Ubuntu': '#E95420',
-            'FreeBSD': '#fbbc04',
-            'Manjaro': '#9900ff'
+            'Alpine': 'blue',
+            'Ubuntu': 'orange',
+            'FreeBSD': 'red',
+            'Manjaro': 'green'
         }
 
         x_positions = []
@@ -95,14 +95,13 @@ class generator:
         for xctr, pi in pi_centers:
             ax.text(xctr, ylim[1] * 0.97, pi, ha='center', va='top', fontsize='medium')
 
-        ax.set_ylabel('Energy Consumption [J]')
-        ax.set_title("Total energy consumption [J] grouped by Raspberry Pi and Python version")
+        ax.set_ylabel('Energy Consumption [J]', size='large')
+        #ax.set_title("Total energy consumption [J] grouped by Raspberry Pi and Python version")
 
         handles = [Patch(facecolor=colors[d], label=d) for d in distros]
         ax.legend(handles=handles, title='OS', loc='upper center', bbox_to_anchor=(0.5, -0.2), ncol=4)
 
         plt.tight_layout()
-        outfn = self.outfile
-        fig.savefig(outfn, dpi=600)
+        fig.savefig(self.outfile, dpi=600)
 
 
