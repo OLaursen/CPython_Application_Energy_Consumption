@@ -17,4 +17,3 @@ class generator:
         files = self.read_csv_result_files()
         result_data = [pd.read_csv(f) for f in files]
         self.dataframe = pd.concat(result_data)
-
