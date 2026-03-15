@@ -5,7 +5,7 @@ This respository is the companion repository for the bachelor thesis:
  > *"Python Application Energy Consumption: Investigating Operating System, Python Version and Hardware Impact on the Energy Consumption of  Application Benchmarks"*.
  
   The experiment uses an Otii Ace Pro to collect Energy Consumption data from Raspberry Pi's running Pyperformance benchmarks in specific execution environments. The descriptive statistics related to each experiment run is stored in csv files which are later used to create tables, boxplots and scatterplots, such that the experiment runs can be analysed. 
-
+The code in this repository was made using LLM's, primarily Github Copilot and ChatGPT. 
 **Layout of the repository**
 
 In the "Experiment" folder you will find install scripts for each of the available Operating Systems, named "install_python<OS>.sh", 
