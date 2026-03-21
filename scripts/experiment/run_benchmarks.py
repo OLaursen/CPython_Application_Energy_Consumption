@@ -12,8 +12,8 @@ class AppException(Exception):
     '''Application Exception'''
 
 def write_record_to_csv(distro, row):
-    headers = ["RPi", "Distro", "Version", "From", "To", "Offset", "Sample rate", "Min", "Max","Average","Mean",
-               "1st quantile", "3rd quantile", "Duration", "Total Energy consumption", "Standard Deviation"]
+    headers = ["RPi", "Distro", "Version", "From", "To", "Offset", "Sample rate", "Min", "Max","Mean",
+               "1st quantile", "3rd quantile", "Average","Duration", "Total Energy consumption", "Standard Deviation"]
     file_path = f"../../results/results_{distro}.csv"
     file_exists = os.path.isfile(file_path)        
     with open(file_path, mode="a", newline="") as file:
