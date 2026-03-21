@@ -1,4 +1,4 @@
-RPi,Distro,Version,From,To,Offset,Sample rate,Min,Max,Average,Mean,1st quantile,3rd quantile,Duration,Total Energy Consumption,Standard Deviation
+RPi,Distro,Version,From,To,Offset,Sample rate,Min,Max,Mean,1st quantile,3rd quantile,Average,Duration,Total Energy Consumption,Standard Deviation
 RPi3B+,Alpine,3.13.7,0,9598.946,0,10000,2.274,3.941,2.669,2.646,2.671,2.669,9598.946,25615.031,0.055
 RPi3B+,Alpine,3.12.11,0,9976.984,0,10000,2.273,3.909,2.667,2.645,2.67,2.667,9976.984,26610.264,0.054
 RPi3B+,Alpine,3.11.13,0,9469.613,0,10000,2.274,3.892,2.67,2.649,2.673,2.67,9469.613,25287.82,0.054
